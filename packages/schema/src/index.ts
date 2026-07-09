@@ -1,4 +1,5 @@
 export { Agent } from "./agent"
+export { AiLooper } from "./ai-looper"
 export { Command } from "./command"
 export { Connection } from "./connection"
 export { Credential } from "./credential"

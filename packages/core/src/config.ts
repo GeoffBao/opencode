@@ -11,6 +11,7 @@ import { Location } from "./location"
 import { Policy } from "./policy"
 import { AbsolutePath } from "./schema"
 import { ConfigAgent } from "./config/agent"
+import { ConfigAILooper } from "./config/ai-looper"
 import { ConfigAttachments } from "./config/attachments"
 import { ConfigCompaction } from "./config/compaction"
 import { ConfigCommand } from "./config/command"
@@ -104,6 +105,9 @@ export class Info extends Schema.Class<Info>("Config.Info")({
   }),
   experimental: ConfigExperimental.Experimental.pipe(Schema.optional),
   providers: Schema.Record(Schema.String, ConfigProvider.Info).pipe(Schema.optional),
+  ai_looper: ConfigAILooper.Info.pipe(Schema.optional).annotate({
+    description: "AI Looper enterprise task automation configuration",
+  }),
 }) {}
 
 export class Document extends Schema.Class<Document>("Config.Document")({

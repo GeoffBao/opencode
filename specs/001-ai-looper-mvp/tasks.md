@@ -11,14 +11,14 @@
 
 **Purpose**: Establish AI Looper package structure, contract placeholders, and feature configuration.
 
-- [ ] T001 Create AI Looper schema module placeholder in `packages/schema/src/ai-looper.ts`
-- [ ] T002 Create AI Looper protocol module placeholder in `packages/protocol/src/ai-looper.ts`
-- [ ] T003 Create AI Looper core module directory in `packages/core/src/ai-looper/`
-- [ ] T004 [P] Create AI Looper server handler placeholder in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T005 [P] Create AI Looper enterprise route placeholder in `packages/enterprise/src/routes/ai-looper.tsx`
-- [ ] T006 [P] Create AI Looper TaskRun detail route placeholder in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
-- [ ] T007 Add AI Looper config module following self-export pattern in `packages/core/src/config/ai-looper.ts`
-- [ ] T008 Update core config exports for AI Looper in `packages/core/src/config.ts`
+- [X] T001 Create AI Looper schema module placeholder in `packages/schema/src/ai-looper.ts`
+- [X] T002 Create AI Looper protocol module placeholder in `packages/protocol/src/ai-looper.ts`
+- [X] T003 Create AI Looper core module directory in `packages/core/src/ai-looper/`
+- [X] T004 [P] Create AI Looper server handler placeholder in `packages/server/src/handlers/ai-looper.ts`
+- [X] T005 [P] Create AI Looper enterprise route placeholder in `packages/enterprise/src/routes/ai-looper.tsx`
+- [X] T006 [P] Create AI Looper TaskRun detail route placeholder in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
+- [X] T007 Add AI Looper config module following self-export pattern in `packages/core/src/config/ai-looper.ts`
+- [X] T008 Update core config exports for AI Looper in `packages/core/src/config.ts`
 
 ---
 
@@ -28,23 +28,23 @@
 
 **⚠️ CRITICAL**: No user story work should begin until this phase is complete.
 
-- [ ] T009 Define shared SourceTask, TaskCapsule, TaskRun, RoutingDecision, ApprovalDecision, Artifact, Evidence, ExternalEvent, ExternalWrite, WorktimeDraft, KnowledgeAssetCandidate, and PublishedTeamAsset schemas in `packages/schema/src/ai-looper.ts`
-- [ ] T010 Define AI Looper protocol request/response contracts matching `specs/001-ai-looper-mvp/contracts/ai-looper-api.yaml` in `packages/protocol/src/ai-looper.ts`
-- [ ] T011 Define RuntimeAdapter input/output types matching `specs/001-ai-looper-mvp/contracts/runtime-adapter.md` in `packages/core/src/ai-looper/runtime.ts`
-- [ ] T012 Define TeambitionAdapter interface and transport-neutral capability boundary in `packages/core/src/ai-looper/teambition.ts`
-- [ ] T013 Define TaskRun state machine phases, dispositions, lifecycle, and gate states in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T014 Define deterministic transition guard skeleton for allowed edges, evidence, authority, retry budget, and idempotency in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T015 Define execution-track routing policy for spec-driven, standard-task, and bugfix in `packages/core/src/ai-looper/routing.ts`
-- [ ] T016 Define evidence validation and completion guard skeleton in `packages/core/src/ai-looper/evidence.ts`
-- [ ] T017 Define idempotent outbox/inbox model skeleton for external writes and inbound events in `packages/core/src/ai-looper/outbox.ts`
-- [ ] T018 Define audit record helper skeleton for transitions, approvals, writes, retries, cancellations, and interventions in `packages/core/src/ai-looper/audit.ts`
+- [X] T009 Define shared SourceTask, TaskCapsule, TaskRun, RoutingDecision, ApprovalDecision, Artifact, Evidence, ExternalEvent, ExternalWrite, WorktimeDraft, KnowledgeAssetCandidate, and PublishedTeamAsset schemas in `packages/schema/src/ai-looper.ts`
+- [X] T010 Define AI Looper protocol request/response contracts matching `specs/001-ai-looper-mvp/contracts/ai-looper-api.yaml` in `packages/protocol/src/ai-looper.ts`
+- [X] T011 Define RuntimeAdapter input/output types matching `specs/001-ai-looper-mvp/contracts/runtime-adapter.md` in `packages/core/src/ai-looper/runtime.ts`
+- [X] T012 Define TeambitionAdapter interface and transport-neutral capability boundary in `packages/core/src/ai-looper/teambition.ts`
+- [X] T013 Define TaskRun state machine phases, dispositions, lifecycle, and gate states in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T014 Define deterministic transition guard skeleton for allowed edges, evidence, authority, retry budget, and idempotency in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T015 Define execution-track routing policy for spec-driven, standard-task, and bugfix in `packages/core/src/ai-looper/routing.ts`
+- [X] T016 Define evidence validation and completion guard skeleton in `packages/core/src/ai-looper/evidence.ts`
+- [X] T017 Define idempotent outbox/inbox model skeleton for external writes and inbound events in `packages/core/src/ai-looper/outbox.ts`
+- [X] T018 Define audit record helper skeleton for transitions, approvals, writes, retries, cancellations, and interventions in `packages/core/src/ai-looper/audit.ts`
 - [ ] T019 Define AI Looper database schema and migrations following snake_case Drizzle conventions in `packages/core/src/ai-looper/sql.ts`
-- [ ] T020 [P] Add schema type tests for AI Looper entities in `packages/schema/test/ai-looper.test.ts`
-- [ ] T021 [P] Add protocol contract tests for AI Looper API shapes in `packages/protocol/test/ai-looper.test.ts`
-- [ ] T022 [P] Add TaskRun transition guard unit tests in `packages/core/test/ai-looper/taskrun.test.ts`
-- [ ] T023 [P] Add routing policy unit tests for feature/task/bug and size/risk escalation in `packages/core/test/ai-looper/routing.test.ts`
-- [ ] T024 [P] Add idempotency unit tests for ExternalEvent and ExternalWrite keys in `packages/core/test/ai-looper/outbox.test.ts`
-- [ ] T025 [P] Add audit helper unit tests in `packages/core/test/ai-looper/audit.test.ts`
+- [X] T020 [P] Add schema type tests for AI Looper entities in `packages/schema/test/ai-looper.test.ts`
+- [X] T021 [P] Add protocol contract tests for AI Looper API shapes in `packages/protocol/test/ai-looper.test.ts`
+- [X] T022 [P] Add TaskRun transition guard unit tests in `packages/core/test/ai-looper/taskrun.test.ts`
+- [X] T023 [P] Add routing policy unit tests for feature/task/bug and size/risk escalation in `packages/core/test/ai-looper/routing.test.ts`
+- [X] T024 [P] Add idempotency unit tests for ExternalEvent and ExternalWrite keys in `packages/core/test/ai-looper/outbox.test.ts`
+- [X] T025 [P] Add audit helper unit tests in `packages/core/test/ai-looper/audit.test.ts`
 - [ ] T026 Register AI Looper server routes in `packages/server/src/routes.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel.
