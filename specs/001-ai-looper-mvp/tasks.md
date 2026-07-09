@@ -63,7 +63,7 @@
 - [X] T028 [P] [US1] Add contract test for `GET /ai-looper/tasks/{taskCapsuleId}` in `packages/server/test/contract/ai-looper-task-detail.test.ts`
 - [ ] T029 [P] [US1] Add integration test for authorized personal Teambition task list import in `packages/core/test/ai-looper/teambition-import.test.ts`
 - [ ] T030 [P] [US1] Add integration test for source content vs AI interpretation separation in `packages/enterprise/test/ai-looper-task-view.test.tsx`
-- [ ] T031 [P] [US1] Add routing integration test for feature/task/bug to execution tracks in `packages/core/test/ai-looper/routing-integration.test.ts`
+- [X] T031 [P] [US1] Add routing integration test for feature/task/bug to execution tracks in `packages/core/test/ai-looper/routing-integration.test.ts`
 
 ### Implementation for User Story 1
 
