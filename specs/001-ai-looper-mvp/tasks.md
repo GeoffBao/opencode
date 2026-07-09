@@ -38,14 +38,14 @@
 - [X] T016 Define evidence validation and completion guard skeleton in `packages/core/src/ai-looper/evidence.ts`
 - [X] T017 Define idempotent outbox/inbox model skeleton for external writes and inbound events in `packages/core/src/ai-looper/outbox.ts`
 - [X] T018 Define audit record helper skeleton for transitions, approvals, writes, retries, cancellations, and interventions in `packages/core/src/ai-looper/audit.ts`
-- [ ] T019 Define AI Looper database schema and migrations following snake_case Drizzle conventions in `packages/core/src/ai-looper/sql.ts`
+- [X] T019 Define AI Looper database schema and migrations following snake_case Drizzle conventions in `packages/core/src/ai-looper/sql.ts`
 - [X] T020 [P] Add schema type tests for AI Looper entities in `packages/schema/test/ai-looper.test.ts`
 - [X] T021 [P] Add protocol contract tests for AI Looper API shapes in `packages/protocol/test/ai-looper.test.ts`
 - [X] T022 [P] Add TaskRun transition guard unit tests in `packages/core/test/ai-looper/taskrun.test.ts`
 - [X] T023 [P] Add routing policy unit tests for feature/task/bug and size/risk escalation in `packages/core/test/ai-looper/routing.test.ts`
 - [X] T024 [P] Add idempotency unit tests for ExternalEvent and ExternalWrite keys in `packages/core/test/ai-looper/outbox.test.ts`
 - [X] T025 [P] Add audit helper unit tests in `packages/core/test/ai-looper/audit.test.ts`
-- [ ] T026 Register AI Looper server routes in `packages/server/src/routes.ts`
+- [X] T026 Register AI Looper server routes in `packages/server/src/routes.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel.
 
