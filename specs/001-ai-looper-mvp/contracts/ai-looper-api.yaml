@@ -1,0 +1,472 @@
+openapi: 3.1.0
+info:
+  title: AI Looper MVP API
+  version: 0.1.0
+  description: >
+    Contract for the AI Looper MVP control plane. The API exposes TaskCapsules,
+    TaskRuns, approvals, evidence, delivery summary, worktime confirmation, and
+    external-event ingestion while keeping Coding Runtime behavior behind an
+    adapter boundary.
+servers:
+  - url: /api
+paths:
+  /ai-looper/tasks:
+    get:
+      summary: List Teambition tasks assigned to the signed-in engineer
+      operationId: listAiLooperTasks
+      responses:
+        "200":
+          description: Authorized task capsules
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [tasks]
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaskCapsuleSummary"
+  /ai-looper/tasks/{taskCapsuleId}:
+    get:
+      summary: Read source task context and current TaskRun
+      operationId: getAiLooperTask
+      parameters:
+        - $ref: "#/components/parameters/TaskCapsuleId"
+      responses:
+        "200":
+          description: Task context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskCapsuleDetail"
+        "403":
+          description: User is not authorized to view this source task
+  /ai-looper/tasks/{taskCapsuleId}/runs:
+    post:
+      summary: Start or reuse an active TaskRun for a task capsule
+      operationId: createAiLooperTaskRun
+      parameters:
+        - $ref: "#/components/parameters/TaskCapsuleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [workspaceRef]
+              properties:
+                workspaceRef:
+                  type: string
+                idempotencyKey:
+                  type: string
+      responses:
+        "201":
+          description: TaskRun created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskRun"
+        "200":
+          description: Existing active TaskRun returned for idempotent retry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskRun"
+  /ai-looper/runs/{taskRunId}:
+    get:
+      summary: Read TaskRun progress, artifacts, blockers, and evidence
+      operationId: getAiLooperTaskRun
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      responses:
+        "200":
+          description: TaskRun detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskRunDetail"
+  /ai-looper/runs/{taskRunId}/plan/decision:
+    post:
+      summary: Approve or reject the current execution plan
+      operationId: decideAiLooperPlan
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [planId, planVersion, decision]
+              properties:
+                planId:
+                  type: string
+                planVersion:
+                  type: integer
+                  minimum: 1
+                decision:
+                  type: string
+                  enum: [approved, rejected]
+                comments:
+                  type: string
+      responses:
+        "200":
+          description: Decision accepted and audited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApprovalDecision"
+        "403":
+          description: Actor is not an authorized reviewer
+        "409":
+          description: Plan version is stale or no longer reviewable
+  /ai-looper/runs/{taskRunId}/human-evidence:
+    post:
+      summary: Add structured human acceptance evidence
+      operationId: addAiLooperHumanEvidence
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [acceptanceCriterionId, result, explanation]
+              properties:
+                acceptanceCriterionId:
+                  type: string
+                result:
+                  type: string
+                  enum: [pass, fail, inconclusive]
+                explanation:
+                  type: string
+      responses:
+        "201":
+          description: Human evidence recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Evidence"
+        "403":
+          description: Actor is not authorized to provide this evidence
+  /ai-looper/runs/{taskRunId}/delivery-summary:
+    post:
+      summary: Submit an idempotent Teambition delivery summary
+      operationId: submitAiLooperDeliverySummary
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deliverySummaryArtifactId, deliverySummaryVersion]
+              properties:
+                deliverySummaryArtifactId:
+                  type: string
+                deliverySummaryVersion:
+                  type: integer
+                  minimum: 1
+      responses:
+        "202":
+          description: Write enqueued or already acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalWrite"
+  /ai-looper/runs/{taskRunId}/worktime:
+    post:
+      summary: Responsible engineer confirms and submits actual worktime
+      operationId: submitAiLooperWorktime
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [worktimeDraftId, confirmedMinutes, confirmedDescription]
+              properties:
+                worktimeDraftId:
+                  type: string
+                confirmedMinutes:
+                  type: integer
+                  minimum: 1
+                confirmedDescription:
+                  type: string
+      responses:
+        "202":
+          description: Worktime write enqueued or already acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalWrite"
+        "403":
+          description: Only the responsible engineer may submit worktime
+  /ai-looper/runs/{taskRunId}/cancel:
+    post:
+      summary: Cancel an active TaskRun
+      operationId: cancelAiLooperTaskRun
+      parameters:
+        - $ref: "#/components/parameters/TaskRunId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: TaskRun cancellation recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskRun"
+  /ai-looper/events:
+    post:
+      summary: Ingest external events from Teambition, UI, or runtime adapters
+      operationId: ingestAiLooperExternalEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExternalEventInput"
+      responses:
+        "202":
+          description: Event accepted, processed, or ignored as duplicate
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [externalEventId, processedState]
+                properties:
+                  externalEventId:
+                    type: string
+                  processedState:
+                    type: string
+                    enum: [pending, processed, ignored_duplicate]
+components:
+  parameters:
+    TaskCapsuleId:
+      name: taskCapsuleId
+      in: path
+      required: true
+      schema:
+        type: string
+    TaskRunId:
+      name: taskRunId
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    TaskCapsuleSummary:
+      type: object
+      required: [taskCapsuleId, sourceTaskId, title, sourceStatus, responsibleEngineerId]
+      properties:
+        taskCapsuleId:
+          type: string
+        sourceTaskId:
+          type: string
+        title:
+          type: string
+        sourceStatus:
+          type: string
+        responsibleEngineerId:
+          type: string
+        activeTaskRunId:
+          type: string
+    TaskCapsuleDetail:
+      type: object
+      required: [taskCapsule, sourceTask]
+      properties:
+        taskCapsule:
+          $ref: "#/components/schemas/TaskCapsuleSummary"
+        sourceTask:
+          $ref: "#/components/schemas/SourceTask"
+        currentTaskRun:
+          $ref: "#/components/schemas/TaskRun"
+    SourceTask:
+      type: object
+      required: [sourceTaskId, sourceSystem, title, workItemType, visibilityState, acceptanceCriteria]
+      properties:
+        sourceTaskId:
+          type: string
+        sourceSystem:
+          type: string
+          enum: [teambition]
+        title:
+          type: string
+        description:
+          type: string
+        sourceStatus:
+          type: string
+        workItemType:
+          type: string
+          enum: [feature, task, bug, unknown]
+        visibilityState:
+          type: string
+          enum: [visible, missing, inaccessible, deleted, archived, reassigned]
+        acceptanceCriteria:
+          type: array
+          items:
+            $ref: "#/components/schemas/AcceptanceCriterion"
+    AcceptanceCriterion:
+      type: object
+      required: [acceptanceCriterionId, text, sourceRef]
+      properties:
+        acceptanceCriterionId:
+          type: string
+        text:
+          type: string
+        sourceRef:
+          type: string
+    TaskRun:
+      type: object
+      required: [taskRunId, executionTrack, phase, disposition, lifecycle, latestCommittedStep]
+      properties:
+        taskRunId:
+          type: string
+        executionTrack:
+          type: string
+          enum: [spec_driven, standard_task, bugfix]
+        phase:
+          type: string
+          enum: [received, analyzing, planning, plan_review, implementing, verifying, reporting, time_confirmation, completed, cancelled]
+        disposition:
+          type: string
+          enum: [running, waiting, blocked, escalated]
+        lifecycle:
+          type: string
+          enum: [active, completed, cancelled, archived]
+        latestCommittedStep:
+          type: string
+        nextExpectedAction:
+          type: string
+    TaskRunDetail:
+      allOf:
+        - $ref: "#/components/schemas/TaskRun"
+        - type: object
+          required: [artifacts, evidence, auditRecords]
+          properties:
+            artifacts:
+              type: array
+              items:
+                $ref: "#/components/schemas/Artifact"
+            evidence:
+              type: array
+              items:
+                $ref: "#/components/schemas/Evidence"
+            auditRecords:
+              type: array
+              items:
+                $ref: "#/components/schemas/AuditRecord"
+    ApprovalDecision:
+      type: object
+      required: [approvalDecisionId, taskRunId, artifactId, artifactVersion, decision, actorId, decidedAt]
+      properties:
+        approvalDecisionId:
+          type: string
+        taskRunId:
+          type: string
+        artifactId:
+          type: string
+        artifactVersion:
+          type: integer
+        decision:
+          type: string
+          enum: [approved, rejected]
+        actorId:
+          type: string
+        decidedAt:
+          type: string
+          format: date-time
+    Artifact:
+      type: object
+      required: [artifactId, artifactType, version, createdAt]
+      properties:
+        artifactId:
+          type: string
+        artifactType:
+          type: string
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    Evidence:
+      type: object
+      required: [evidenceId, acceptanceCriterionId, evidenceType, result, observedAt]
+      properties:
+        evidenceId:
+          type: string
+        acceptanceCriterionId:
+          type: string
+        evidenceType:
+          type: string
+          enum: [automated_test, static_check, runtime_observation, human_acceptance, external_ack, manual_note]
+        result:
+          type: string
+          enum: [pass, fail, inconclusive]
+        explanation:
+          type: string
+        observedAt:
+          type: string
+          format: date-time
+    ExternalWrite:
+      type: object
+      required: [externalWriteId, targetSystem, writeType, idempotencyKey, status]
+      properties:
+        externalWriteId:
+          type: string
+        targetSystem:
+          type: string
+          enum: [teambition]
+        writeType:
+          type: string
+          enum: [progress_note, delivery_summary, worktime]
+        idempotencyKey:
+          type: string
+        status:
+          type: string
+          enum: [pending, sent, acknowledged, retrying, failed, cancelled]
+    ExternalEventInput:
+      type: object
+      required: [sourceSystem, eventType, payload]
+      properties:
+        sourceSystem:
+          type: string
+          enum: [teambition, ai_looper_ui, coding_runtime]
+        sourceEventId:
+          type: string
+        eventType:
+          type: string
+        idempotencyKey:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+    AuditRecord:
+      type: object
+      required: [auditRecordId, actorOrSource, actionType, createdAt]
+      properties:
+        auditRecordId:
+          type: string
+        actorOrSource:
+          type: string
+        actionType:
+          type: string
+        reasonOrEvidence:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
