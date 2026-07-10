@@ -17,6 +17,64 @@ const sampleTask: AILooperTaskDetail = {
   planReviewStatus: "awaiting_formal_approval",
   lightweightBriefStatus: "not_required",
   bugfixGateStatus: "not_required",
+  run: {
+    taskRunID: "run_feature",
+    phase: "plan_review",
+    disposition: "waiting",
+    lifecycle: "active",
+    responsibleRole: "方案审核负责人",
+    latestCommittedStep: "已生成结构化需求理解和执行计划",
+    nextExpectedAction: "await_formal_plan_approval",
+    updatedAt: "2026-07-10T01:00:00.000Z",
+    attempts: [
+      {
+        executionAttemptID: "attempt_analysis",
+        attemptType: "analysis",
+        outcome: "succeeded",
+        progressSummary: "完成 Teambition 原始需求解析",
+        startedAt: "2026-07-10T00:10:00.000Z",
+        endedAt: "2026-07-10T00:20:00.000Z",
+      },
+    ],
+    artifacts: [
+      {
+        artifactID: "art_plan",
+        artifactType: "execution_plan",
+        version: 1,
+        contentRef: "execution_plan:run_feature:1",
+        provenance: "ai-looper",
+        createdAt: "2026-07-10T00:20:00.000Z",
+      },
+    ],
+    evidence: [
+      {
+        evidenceID: "ev_plan_review_ready",
+        evidenceType: "manual_note",
+        result: "pass",
+        explanation: "计划已准备提交审核",
+        observedAt: "2026-07-10T00:21:00.000Z",
+      },
+    ],
+    externalWrites: [
+      {
+        externalWriteID: "write_progress",
+        targetSystem: "teambition",
+        writeType: "progress_note",
+        status: "pending",
+        attemptCount: 0,
+        updatedAt: "2026-07-10T00:22:00.000Z",
+      },
+    ],
+    auditRecords: [
+      {
+        auditRecordID: "audit_plan_created",
+        actorOrSource: "ai-looper",
+        actionType: "plan.generated",
+        reasonOrEvidence: "artifact:art_plan:version:1",
+        createdAt: "2026-07-10T00:20:00.000Z",
+      },
+    ],
+  },
 }
 
 export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }) {
@@ -63,6 +121,89 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           <dt>Bugfix gate</dt>
           <dd>{sections.gates.bugfixGateStatus}</dd>
         </dl>
+      </section>
+      <section aria-label="TaskRun status">
+        <h2>{sections.status.title}</h2>
+        <dl>
+          <dt>TaskRun</dt>
+          <dd>{sections.status.taskRunID}</dd>
+          <dt>Phase</dt>
+          <dd>{sections.status.phase}</dd>
+          <dt>Disposition</dt>
+          <dd>{sections.status.disposition}</dd>
+          <dt>Lifecycle</dt>
+          <dd>{sections.status.lifecycle}</dd>
+          <dt>Responsible role</dt>
+          <dd>{sections.status.responsibleRole}</dd>
+          <dt>Latest committed step</dt>
+          <dd>{sections.status.latestCommittedStep}</dd>
+          <dt>Next expected action</dt>
+          <dd>{sections.status.nextExpectedAction}</dd>
+          <dt>Updated at</dt>
+          <dd>{sections.status.updatedAt}</dd>
+          {sections.status.blockedReason ? (
+            <>
+              <dt>Blocked reason</dt>
+              <dd>{sections.status.blockedReason}</dd>
+            </>
+          ) : null}
+          {sections.status.escalationReason ? (
+            <>
+              <dt>Escalation reason</dt>
+              <dd>{sections.status.escalationReason}</dd>
+            </>
+          ) : null}
+        </dl>
+      </section>
+      <section aria-label="Execution attempts">
+        <h2>{sections.attempts.title}</h2>
+        <ul>
+          {sections.attempts.items.map((attempt) => (
+            <li data-attempt-id={attempt.executionAttemptID}>
+              {attempt.attemptType} · {attempt.outcome} · {attempt.progressSummary}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-label="Artifacts">
+        <h2>{sections.artifacts.title}</h2>
+        <ul>
+          {sections.artifacts.items.map((artifact) => (
+            <li data-artifact-id={artifact.artifactID}>
+              {artifact.artifactType} v{artifact.version} · {artifact.provenance}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-label="Evidence">
+        <h2>{sections.evidence.title}</h2>
+        <ul>
+          {sections.evidence.items.map((evidence) => (
+            <li data-evidence-id={evidence.evidenceID}>
+              {evidence.evidenceType} · {evidence.result} · {evidence.explanation}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-label="External writes">
+        <h2>{sections.externalWrites.title}</h2>
+        <ul>
+          {sections.externalWrites.items.map((write) => (
+            <li data-external-write-id={write.externalWriteID}>
+              {write.targetSystem} · {write.writeType} · {write.status} · attempt {write.attemptCount}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-label="Audit timeline">
+        <h2>{sections.audit.title}</h2>
+        <ol>
+          {sections.audit.items.map((record) => (
+            <li data-audit-record-id={record.auditRecordID}>
+              {record.createdAt} · {record.actorOrSource} · {record.actionType} · {record.reasonOrEvidence}
+            </li>
+          ))}
+        </ol>
       </section>
     </main>
   )
