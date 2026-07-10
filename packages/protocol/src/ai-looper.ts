@@ -69,8 +69,34 @@ export namespace AiLooperProtocol {
   })
   export type CancelTaskRunRequest = typeof CancelTaskRunRequest.Type
 
+  export const HumanEvidenceRequest = Schema.Struct({
+    acceptance_criterion_id: AiLooper.ID,
+    result: AiLooper.EvidenceResult,
+    explanation: Schema.String,
+  })
+  export type HumanEvidenceRequest = typeof HumanEvidenceRequest.Type
+
+  export const DeliverySummaryRequest = Schema.Struct({
+    delivery_summary_artifact_id: AiLooper.ID,
+    delivery_summary_version: Schema.Number,
+  })
+  export type DeliverySummaryRequest = typeof DeliverySummaryRequest.Type
+
+  export const WorktimeSubmissionRequest = Schema.Struct({
+    worktime_draft_id: AiLooper.ID,
+    confirmed_minutes: Schema.Number,
+    confirmed_description: Schema.String,
+  })
+  export type WorktimeSubmissionRequest = typeof WorktimeSubmissionRequest.Type
+
   export const PlanDecisionResponse = AiLooper.ApprovalDecision
   export type PlanDecisionResponse = typeof PlanDecisionResponse.Type
+
+  export const HumanEvidenceResponse = AiLooper.Evidence
+  export type HumanEvidenceResponse = typeof HumanEvidenceResponse.Type
+
+  export const ExternalWriteResponse = AiLooper.ExternalWrite.annotate({ httpApiStatus: 202 })
+  export type ExternalWriteResponse = typeof ExternalWriteResponse.Type
 
   export const ExternalEventRequest = Schema.Struct({
     source_system: Schema.Literals(["teambition", "ai_looper_ui", "coding_runtime"]),

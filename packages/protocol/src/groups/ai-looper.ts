@@ -75,6 +75,48 @@ export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
     ),
   )
   .add(
+    HttpApiEndpoint.post("aiLooper.run.humanEvidence", "/api/ai-looper/runs/:taskRunID/human-evidence", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      payload: AiLooperProtocol.HumanEvidenceRequest,
+      success: AiLooperProtocol.HumanEvidenceResponse,
+      error: [AiLooperTaskRunNotFoundError, ForbiddenError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.run.humanEvidence",
+        summary: "Record human acceptance evidence",
+        description: "Record authorized human evidence against one TaskRun acceptance criterion.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.post("aiLooper.run.deliverySummary", "/api/ai-looper/runs/:taskRunID/delivery-summary", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      payload: AiLooperProtocol.DeliverySummaryRequest,
+      success: AiLooperProtocol.ExternalWriteResponse,
+      error: [AiLooperTaskRunNotFoundError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.run.deliverySummary",
+        summary: "Queue Teambition delivery summary",
+        description: "Queue an idempotent Teambition delivery summary write for a completed TaskRun.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.post("aiLooper.run.worktime", "/api/ai-looper/runs/:taskRunID/worktime", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      payload: AiLooperProtocol.WorktimeSubmissionRequest,
+      success: AiLooperProtocol.ExternalWriteResponse,
+      error: [AiLooperTaskRunNotFoundError, ForbiddenError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.run.worktime",
+        summary: "Queue confirmed worktime submission",
+        description: "Queue a responsible-engineer-confirmed, idempotent Teambition worktime write.",
+      }),
+    ),
+  )
+  .add(
     HttpApiEndpoint.post("aiLooper.plan.decide", "/api/ai-looper/runs/:taskRunID/plan/decision", {
       params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
       payload: AiLooperProtocol.PlanDecisionRequest,

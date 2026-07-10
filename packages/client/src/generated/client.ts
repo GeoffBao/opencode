@@ -121,6 +121,12 @@ import type {
   ServerAiLooperDetailOutput,
   ServerAiLooperCancelInput,
   ServerAiLooperCancelOutput,
+  ServerAiLooperHumanEvidenceInput,
+  ServerAiLooperHumanEvidenceOutput,
+  ServerAiLooperDeliverySummaryInput,
+  ServerAiLooperDeliverySummaryOutput,
+  ServerAiLooperWorktimeInput,
+  ServerAiLooperWorktimeOutput,
   ServerAiLooperDecideInput,
   ServerAiLooperDecideOutput,
   ServerAiLooperIngestInput,
@@ -1054,6 +1060,53 @@ export function make(options: ClientOptions) {
             body: { reason: input["reason"] },
             successStatus: 200,
             declaredStatuses: [404, 403, 409, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      humanEvidence: (input: ServerAiLooperHumanEvidenceInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperHumanEvidenceOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}/human-evidence`,
+            body: {
+              acceptance_criterion_id: input["acceptance_criterion_id"],
+              result: input["result"],
+              explanation: input["explanation"],
+            },
+            successStatus: 200,
+            declaredStatuses: [404, 403, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      deliverySummary: (input: ServerAiLooperDeliverySummaryInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperDeliverySummaryOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}/delivery-summary`,
+            body: {
+              delivery_summary_artifact_id: input["delivery_summary_artifact_id"],
+              delivery_summary_version: input["delivery_summary_version"],
+            },
+            successStatus: 202,
+            declaredStatuses: [404, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      worktime: (input: ServerAiLooperWorktimeInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperWorktimeOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}/worktime`,
+            body: {
+              worktime_draft_id: input["worktime_draft_id"],
+              confirmed_minutes: input["confirmed_minutes"],
+              confirmed_description: input["confirmed_description"],
+            },
+            successStatus: 202,
+            declaredStatuses: [404, 403, 503, 401, 400],
             empty: false,
           },
           requestOptions,

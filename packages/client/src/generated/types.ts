@@ -3128,6 +3128,109 @@ export type ServerAiLooperCancelOutput = {
   readonly cancelled_at?: string | undefined
 }
 
+export type ServerAiLooperHumanEvidenceInput = {
+  readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
+  readonly acceptance_criterion_id: {
+    readonly acceptance_criterion_id: string
+    readonly result: "pass" | "fail" | "inconclusive"
+    readonly explanation: string
+  }["acceptance_criterion_id"]
+  readonly result: {
+    readonly acceptance_criterion_id: string
+    readonly result: "pass" | "fail" | "inconclusive"
+    readonly explanation: string
+  }["result"]
+  readonly explanation: {
+    readonly acceptance_criterion_id: string
+    readonly result: "pass" | "fail" | "inconclusive"
+    readonly explanation: string
+  }["explanation"]
+}
+
+export type ServerAiLooperHumanEvidenceOutput = {
+  readonly evidence_id: string
+  readonly task_run_id: string
+  readonly acceptance_criterion_id?: string | undefined
+  readonly evidence_type:
+    | "automated_test"
+    | "static_check"
+    | "runtime_observation"
+    | "bug_reproduction"
+    | "human_acceptance"
+    | "external_ack"
+    | "manual_note"
+  readonly result: "pass" | "fail" | "inconclusive"
+  readonly artifact_refs: ReadonlyArray<string>
+  readonly actor_id?: string | undefined
+  readonly runtime_adapter?: string | undefined
+  readonly explanation?: string | undefined
+  readonly observed_at: string
+  readonly audit_record_id?: string | undefined
+}
+
+export type ServerAiLooperDeliverySummaryInput = {
+  readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
+  readonly delivery_summary_artifact_id: {
+    readonly delivery_summary_artifact_id: string
+    readonly delivery_summary_version: number
+  }["delivery_summary_artifact_id"]
+  readonly delivery_summary_version: {
+    readonly delivery_summary_artifact_id: string
+    readonly delivery_summary_version: number
+  }["delivery_summary_version"]
+}
+
+export type ServerAiLooperDeliverySummaryOutput = {
+  readonly external_write_id: string
+  readonly task_run_id: string
+  readonly target_system: "teambition"
+  readonly write_type: "progress_note" | "delivery_summary" | "worktime"
+  readonly idempotency_key: string
+  readonly payload_ref: string
+  readonly status: "pending" | "sent" | "acknowledged" | "retrying" | "failed" | "cancelled"
+  readonly attempt_count: number
+  readonly next_retry_at?: string | undefined
+  readonly last_error?: string | undefined
+  readonly created_at: string
+  readonly updated_at: string
+  readonly acknowledged_at?: string | undefined
+}
+
+export type ServerAiLooperWorktimeInput = {
+  readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
+  readonly worktime_draft_id: {
+    readonly worktime_draft_id: string
+    readonly confirmed_minutes: number
+    readonly confirmed_description: string
+  }["worktime_draft_id"]
+  readonly confirmed_minutes: {
+    readonly worktime_draft_id: string
+    readonly confirmed_minutes: number
+    readonly confirmed_description: string
+  }["confirmed_minutes"]
+  readonly confirmed_description: {
+    readonly worktime_draft_id: string
+    readonly confirmed_minutes: number
+    readonly confirmed_description: string
+  }["confirmed_description"]
+}
+
+export type ServerAiLooperWorktimeOutput = {
+  readonly external_write_id: string
+  readonly task_run_id: string
+  readonly target_system: "teambition"
+  readonly write_type: "progress_note" | "delivery_summary" | "worktime"
+  readonly idempotency_key: string
+  readonly payload_ref: string
+  readonly status: "pending" | "sent" | "acknowledged" | "retrying" | "failed" | "cancelled"
+  readonly attempt_count: number
+  readonly next_retry_at?: string | undefined
+  readonly last_error?: string | undefined
+  readonly created_at: string
+  readonly updated_at: string
+  readonly acknowledged_at?: string | undefined
+}
+
 export type ServerAiLooperDecideInput = {
   readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
   readonly plan_id: {
