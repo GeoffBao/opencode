@@ -147,4 +147,57 @@ describe("AILooper audit", () => {
       related_artifact_refs: ["external_write:write_1", "execution_attempt:attempt_1"],
     })
   })
+
+  test("records completion evaluation, human evidence, delivery writes, and worktime submissions", () => {
+    expect(
+      AILooperAudit.completionEvaluated({
+        taskRunID: "trn_1",
+        result: "complete",
+        evidenceRefs: ["evidence:ev_1"],
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      action_type: "completion.evaluated",
+      reason_or_evidence: "result:complete",
+      related_artifact_refs: ["evidence:ev_1"],
+    })
+    expect(
+      AILooperAudit.humanEvidenceRecorded({
+        taskRunID: "trn_1",
+        actorID: "reviewer_1",
+        evidenceID: "ev_1",
+        acceptanceCriterionID: "criterion_1",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      actor_or_source: "reviewer_1",
+      action_type: "human_evidence.recorded",
+      related_artifact_refs: ["evidence:ev_1", "acceptance_criterion:criterion_1"],
+    })
+    expect(
+      AILooperAudit.deliveryWriteQueued({
+        taskRunID: "trn_1",
+        externalWriteID: "write_delivery_1",
+        deliverySummaryArtifactID: "artifact_delivery_1",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      actor_or_source: "teambition_outbox",
+      action_type: "delivery_summary.queued",
+      related_artifact_refs: ["external_write:write_delivery_1", "artifact:artifact_delivery_1"],
+    })
+    expect(
+      AILooperAudit.worktimeSubmissionQueued({
+        taskRunID: "trn_1",
+        actorID: "eng_1",
+        externalWriteID: "write_worktime_1",
+        worktimeDraftID: "draft_1",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      actor_or_source: "eng_1",
+      action_type: "worktime.queued",
+      related_artifact_refs: ["external_write:write_worktime_1", "worktime_draft:draft_1"],
+    })
+  })
 })

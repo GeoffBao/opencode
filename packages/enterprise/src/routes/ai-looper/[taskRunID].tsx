@@ -17,6 +17,14 @@ const sampleTask: AILooperTaskDetail = {
   planReviewStatus: "awaiting_formal_approval",
   lightweightBriefStatus: "not_required",
   bugfixGateStatus: "not_required",
+  completion: {
+    humanEvidenceStatus: "ready_for_authorized_acceptance",
+    deliverySummaryArtifactID: "art_delivery_summary",
+    deliverySummaryVersion: 1,
+    deliverySummaryStatus: "ready_to_queue",
+    worktimeSuggestedMinutes: 90,
+    worktimeStatus: "awaiting_responsible_engineer_confirmation",
+  },
   run: {
     taskRunID: "run_feature",
     phase: "plan_review",
@@ -184,6 +192,23 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
             </li>
           ))}
         </ul>
+      </section>
+      <section aria-label="Delivery and worktime confirmation">
+        <h2>{sections.completion.title}</h2>
+        <dl>
+          <dt>Human acceptance evidence</dt>
+          <dd>{sections.completion.humanEvidenceStatus}</dd>
+          <dt>Delivery summary</dt>
+          <dd>
+            {sections.completion.deliverySummaryArtifactID ?? "not_ready"}
+            {sections.completion.deliverySummaryVersion ? ` v${sections.completion.deliverySummaryVersion}` : ""}
+            {` · ${sections.completion.deliverySummaryStatus}`}
+          </dd>
+          <dt>Suggested worktime</dt>
+          <dd>{sections.completion.worktimeSuggestedMinutes ?? "not_ready"}</dd>
+          <dt>Worktime confirmation</dt>
+          <dd>{sections.completion.worktimeStatus}</dd>
+        </dl>
       </section>
       <section aria-label="External writes">
         <h2>{sections.externalWrites.title}</h2>

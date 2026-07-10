@@ -195,11 +195,11 @@
 - [X] T093 [US5] Implement Teambition progress note and delivery summary outbox writes in `packages/core/src/ai-looper/outbox.ts`
 - [X] T094 [US5] Implement worktime draft generation excluding unattended Agent runtime and idle waiting in `packages/core/src/ai-looper/taskrun.ts`
 - [X] T095 [US5] Implement responsible-engineer worktime confirmation and outbox write in `packages/core/src/ai-looper/outbox.ts`
-- [ ] T096 [US5] Implement `POST /ai-looper/runs/{taskRunId}/human-evidence` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T097 [US5] Implement `POST /ai-looper/runs/{taskRunId}/delivery-summary` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T098 [US5] Implement `POST /ai-looper/runs/{taskRunId}/worktime` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T099 [US5] Render delivery summary, human evidence, and worktime confirmation UI in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
-- [ ] T100 [US5] Record audit entries for completion evaluation, delivery writes, human evidence, and worktime submission in `packages/core/src/ai-looper/audit.ts`
+- [X] T096 [US5] Implement `POST /ai-looper/runs/{taskRunId}/human-evidence` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T097 [US5] Implement `POST /ai-looper/runs/{taskRunId}/delivery-summary` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T098 [US5] Implement `POST /ai-looper/runs/{taskRunId}/worktime` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T099 [US5] Render delivery summary, human evidence, and worktime confirmation UI in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
+- [X] T100 [US5] Record audit entries for completion evaluation, delivery writes, human evidence, and worktime submission in `packages/core/src/ai-looper/audit.ts`
 
 **Checkpoint**: US5 independently demoable.
 

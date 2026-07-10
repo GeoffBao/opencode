@@ -206,4 +206,67 @@ export namespace AILooperAudit {
       now: input.now,
     })
   }
+
+  export function completionEvaluated(input: {
+    readonly taskRunID: string
+    readonly result: string
+    readonly evidenceRefs?: ReadonlyArray<string>
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: "completion_guard",
+      actionType: "completion.evaluated",
+      reasonOrEvidence: `result:${input.result}`,
+      relatedArtifactRefs: input.evidenceRefs,
+      now: input.now,
+    })
+  }
+
+  export function humanEvidenceRecorded(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly evidenceID: string
+    readonly acceptanceCriterionID: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: "human_evidence.recorded",
+      relatedArtifactRefs: [`evidence:${input.evidenceID}`, `acceptance_criterion:${input.acceptanceCriterionID}`],
+      now: input.now,
+    })
+  }
+
+  export function deliveryWriteQueued(input: {
+    readonly taskRunID: string
+    readonly externalWriteID: string
+    readonly deliverySummaryArtifactID: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: "teambition_outbox",
+      actionType: "delivery_summary.queued",
+      relatedArtifactRefs: [`external_write:${input.externalWriteID}`, `artifact:${input.deliverySummaryArtifactID}`],
+      now: input.now,
+    })
+  }
+
+  export function worktimeSubmissionQueued(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly externalWriteID: string
+    readonly worktimeDraftID: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: "worktime.queued",
+      relatedArtifactRefs: [`external_write:${input.externalWriteID}`, `worktime_draft:${input.worktimeDraftID}`],
+      now: input.now,
+    })
+  }
 }

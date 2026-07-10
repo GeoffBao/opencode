@@ -37,6 +37,29 @@ describe("AI Looper run state view model", () => {
     expect(sections.externalWrites.items[0]).toMatchObject({ targetSystem: "teambition", writeType: "progress_note" })
     expect(sections.audit.items[0]).toMatchObject({ actorOrSource: "ai-looper", actionType: "runtime.attempt_completed" })
   })
+
+  test("keeps human evidence, delivery summary, and worktime confirmation visible", () => {
+    const sections = taskRunSections({
+      ...taskWithRun(run("running")),
+      completion: {
+        humanEvidenceStatus: "ready_for_authorized_acceptance",
+        deliverySummaryArtifactID: "delivery_1",
+        deliverySummaryVersion: 1,
+        deliverySummaryStatus: "ready_to_queue",
+        worktimeSuggestedMinutes: 90,
+        worktimeStatus: "awaiting_responsible_engineer_confirmation",
+      },
+    })
+
+    expect(sections.completion).toMatchObject({
+      humanEvidenceStatus: "ready_for_authorized_acceptance",
+      deliverySummaryArtifactID: "delivery_1",
+      deliverySummaryVersion: 1,
+      deliverySummaryStatus: "ready_to_queue",
+      worktimeSuggestedMinutes: 90,
+      worktimeStatus: "awaiting_responsible_engineer_confirmation",
+    })
+  })
 })
 
 function taskWithRun(taskRun: AILooperRunDetail): AILooperTaskDetail {

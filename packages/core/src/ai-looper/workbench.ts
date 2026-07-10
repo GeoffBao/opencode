@@ -37,6 +37,23 @@ export namespace AILooperWorkbench {
       readonly taskRunID: AiLooper.ID
       readonly reason: string
     }) => Effect.Effect<AiLooper.TaskRun | undefined, UnavailableError>
+    readonly recordHumanEvidence: (input: {
+      readonly taskRunID: AiLooper.ID
+      readonly acceptanceCriterionID: AiLooper.ID
+      readonly result: AiLooper.EvidenceResult
+      readonly explanation: string
+    }) => Effect.Effect<AiLooper.Evidence | undefined, UnavailableError>
+    readonly queueDeliverySummary: (input: {
+      readonly taskRunID: AiLooper.ID
+      readonly deliverySummaryArtifactID: AiLooper.ID
+      readonly deliverySummaryVersion: number
+    }) => Effect.Effect<AiLooper.ExternalWrite | undefined, UnavailableError>
+    readonly submitWorktime: (input: {
+      readonly taskRunID: AiLooper.ID
+      readonly worktimeDraftID: AiLooper.ID
+      readonly confirmedMinutes: number
+      readonly confirmedDescription: string
+    }) => Effect.Effect<AiLooper.ExternalWrite | undefined, UnavailableError>
     readonly decidePlan: (input: {
       readonly taskRunID: AiLooper.ID
       readonly planID: AiLooper.ID
@@ -72,6 +89,15 @@ export namespace AILooperWorkbench {
       }),
       cancelTaskRun: Effect.fn("AILooperWorkbench.cancelTaskRun")(function* () {
         return yield* new UnavailableError({ message: "AI Looper TaskRun cancellation is not implemented yet" })
+      }),
+      recordHumanEvidence: Effect.fn("AILooperWorkbench.recordHumanEvidence")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper human evidence recording is not implemented yet" })
+      }),
+      queueDeliverySummary: Effect.fn("AILooperWorkbench.queueDeliverySummary")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper delivery summary queueing is not implemented yet" })
+      }),
+      submitWorktime: Effect.fn("AILooperWorkbench.submitWorktime")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper worktime submission is not implemented yet" })
       }),
       decidePlan: Effect.fn("AILooperWorkbench.decidePlan")(function* () {
         return yield* new UnavailableError({ message: "AI Looper plan decision is not implemented yet" })

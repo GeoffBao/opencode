@@ -69,6 +69,62 @@ export const AILooperHandler = HttpApiBuilder.group(Api, "server.aiLooper", (han
       }),
     )
     .handle(
+      "aiLooper.run.humanEvidence",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        const evidence = yield* workbench
+          .recordHumanEvidence({
+            taskRunID: ctx.params.taskRunID,
+            acceptanceCriterionID: ctx.payload.acceptance_criterion_id,
+            result: ctx.payload.result,
+            explanation: ctx.payload.explanation,
+          })
+          .pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+        if (evidence) return evidence
+        return yield* new AiLooperTaskRunNotFoundError({
+          taskRunID: ctx.params.taskRunID,
+          message: `AI Looper TaskRun not found: ${ctx.params.taskRunID}`,
+        })
+      }),
+    )
+    .handle(
+      "aiLooper.run.deliverySummary",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        const write = yield* workbench
+          .queueDeliverySummary({
+            taskRunID: ctx.params.taskRunID,
+            deliverySummaryArtifactID: ctx.payload.delivery_summary_artifact_id,
+            deliverySummaryVersion: ctx.payload.delivery_summary_version,
+          })
+          .pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+        if (write) return write
+        return yield* new AiLooperTaskRunNotFoundError({
+          taskRunID: ctx.params.taskRunID,
+          message: `AI Looper TaskRun not found: ${ctx.params.taskRunID}`,
+        })
+      }),
+    )
+    .handle(
+      "aiLooper.run.worktime",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        const write = yield* workbench
+          .submitWorktime({
+            taskRunID: ctx.params.taskRunID,
+            worktimeDraftID: ctx.payload.worktime_draft_id,
+            confirmedMinutes: ctx.payload.confirmed_minutes,
+            confirmedDescription: ctx.payload.confirmed_description,
+          })
+          .pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+        if (write) return write
+        return yield* new AiLooperTaskRunNotFoundError({
+          taskRunID: ctx.params.taskRunID,
+          message: `AI Looper TaskRun not found: ${ctx.params.taskRunID}`,
+        })
+      }),
+    )
+    .handle(
       "aiLooper.plan.decide",
       Effect.fn(function* (ctx) {
         const workbench = yield* AILooperWorkbench.Service

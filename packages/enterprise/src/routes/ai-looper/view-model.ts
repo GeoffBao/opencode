@@ -13,7 +13,17 @@ export type AILooperTaskDetail = {
   readonly planReviewStatus?: string
   readonly lightweightBriefStatus?: string
   readonly bugfixGateStatus?: string
+  readonly completion?: AILooperCompletion
   readonly run?: AILooperRunDetail
+}
+
+export type AILooperCompletion = {
+  readonly humanEvidenceStatus: string
+  readonly deliverySummaryArtifactID?: string
+  readonly deliverySummaryVersion?: number
+  readonly deliverySummaryStatus: string
+  readonly worktimeSuggestedMinutes?: number
+  readonly worktimeStatus: string
 }
 
 export type AILooperRunDetail = {
@@ -132,6 +142,15 @@ export function taskRunSections(task: AILooperTaskDetail) {
     evidence: {
       title: "验证证据",
       items: task.run?.evidence ?? [],
+    },
+    completion: {
+      title: "交付与工时确认",
+      humanEvidenceStatus: task.completion?.humanEvidenceStatus ?? "awaiting_evidence",
+      deliverySummaryArtifactID: task.completion?.deliverySummaryArtifactID,
+      deliverySummaryVersion: task.completion?.deliverySummaryVersion,
+      deliverySummaryStatus: task.completion?.deliverySummaryStatus ?? "not_ready",
+      worktimeSuggestedMinutes: task.completion?.worktimeSuggestedMinutes,
+      worktimeStatus: task.completion?.worktimeStatus ?? "not_ready",
     },
     externalWrites: {
       title: "企业系统写入",
