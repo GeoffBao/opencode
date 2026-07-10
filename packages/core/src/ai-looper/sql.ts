@@ -2,6 +2,28 @@ import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "driz
 import { AiLooper } from "@opencode-ai/schema/ai-looper"
 import { Timestamps } from "../database/schema.sql"
 
+export const AILooperTaskCapsuleTable = sqliteTable(
+  "ai_looper_task_capsule",
+  {
+    id: text().$type<AiLooper.ID>().primaryKey(),
+    source_system: text().$type<AiLooper.SourceSystem>().notNull(),
+    source_task_id: text().notNull(),
+    title: text().notNull(),
+    source_status: text(),
+    work_item_type: text().$type<AiLooper.WorkItemType>().notNull(),
+    execution_track: text().$type<AiLooper.ExecutionTrack>(),
+    source_task: text({ mode: "json" }).$type<AiLooper.SourceTask>().notNull(),
+    owner_user_id: text().notNull(),
+    workspace_ref: text(),
+    active_task_run_id: text().$type<AiLooper.ID>(),
+    ...Timestamps,
+  },
+  (table) => [
+    uniqueIndex("ai_looper_task_capsule_source_idx").on(table.source_system, table.source_task_id),
+    index("ai_looper_task_capsule_owner_idx").on(table.owner_user_id),
+  ],
+)
+
 export const AILooperTaskRunTable = sqliteTable(
   "ai_looper_task_run",
   {
