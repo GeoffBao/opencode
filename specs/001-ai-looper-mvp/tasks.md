@@ -184,17 +184,17 @@
 - [X] T085 [P] [US5] Add contract test for `POST /ai-looper/runs/{taskRunId}/worktime` in `packages/server/test/contract/ai-looper-worktime.test.ts`
 - [X] T086 [P] [US5] Add completion guard test for missing, stale, conflicting, and unverifiable evidence in `packages/core/test/ai-looper/completion-guard.test.ts`
 - [X] T087 [P] [US5] Add human acceptance evidence authorization test in `packages/core/test/ai-looper/human-evidence.test.ts`
-- [ ] T088 [P] [US5] Add delivery summary and worktime idempotency test in `packages/core/test/ai-looper/teambition-writes.test.ts`
-- [ ] T089 [P] [US5] Add worktime responsible-engineer boundary test in `packages/core/test/ai-looper/worktime-authority.test.ts`
+- [X] T088 [P] [US5] Add delivery summary and worktime idempotency test in `packages/core/test/ai-looper/teambition-writes.test.ts`
+- [X] T089 [P] [US5] Add worktime responsible-engineer boundary test in `packages/core/test/ai-looper/worktime-authority.test.ts`
 
 ### Implementation for User Story 5
 
-- [ ] T090 [US5] Implement human acceptance evidence recording and validation in `packages/core/src/ai-looper/evidence.ts`
-- [ ] T091 [US5] Implement completion guard against acceptance criteria and required evidence in `packages/core/src/ai-looper/evidence.ts`
-- [ ] T092 [US5] Implement delivery summary artifact generation in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T093 [US5] Implement Teambition progress note and delivery summary outbox writes in `packages/core/src/ai-looper/outbox.ts`
-- [ ] T094 [US5] Implement worktime draft generation excluding unattended Agent runtime and idle waiting in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T095 [US5] Implement responsible-engineer worktime confirmation and outbox write in `packages/core/src/ai-looper/outbox.ts`
+- [X] T090 [US5] Implement human acceptance evidence recording and validation in `packages/core/src/ai-looper/evidence.ts`
+- [X] T091 [US5] Implement completion guard against acceptance criteria and required evidence in `packages/core/src/ai-looper/evidence.ts`
+- [X] T092 [US5] Implement delivery summary artifact generation in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T093 [US5] Implement Teambition progress note and delivery summary outbox writes in `packages/core/src/ai-looper/outbox.ts`
+- [X] T094 [US5] Implement worktime draft generation excluding unattended Agent runtime and idle waiting in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T095 [US5] Implement responsible-engineer worktime confirmation and outbox write in `packages/core/src/ai-looper/outbox.ts`
 - [ ] T096 [US5] Implement `POST /ai-looper/runs/{taskRunId}/human-evidence` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T097 [US5] Implement `POST /ai-looper/runs/{taskRunId}/delivery-summary` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T098 [US5] Implement `POST /ai-looper/runs/{taskRunId}/worktime` handler in `packages/server/src/handlers/ai-looper.ts`

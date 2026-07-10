@@ -261,6 +261,28 @@ export function createLightweightTaskBriefArtifact(input: VersionedArtifactInput
   return versionedArtifact(input, "lightweight_task_brief", `lightweight_task_brief:${input.taskRunID}:${input.version}`)
 }
 
+export function createDeliverySummaryArtifact(input: VersionedArtifactInput): AiLooper.Artifact {
+  return versionedArtifact(input, "delivery_summary", `delivery_summary:${input.taskRunID}:${input.version}`)
+}
+
+export function createWorktimeDraft(input: {
+  readonly worktimeDraftID: AiLooper.ID
+  readonly taskRunID: AiLooper.ID
+  readonly observedMinutes: number
+  readonly unattendedAgentRuntimeMinutes: number
+  readonly idleWaitMinutes: number
+  readonly suggestedDescription: string
+}): AiLooper.WorktimeDraft {
+  return {
+    worktime_draft_id: input.worktimeDraftID,
+    task_run_id: input.taskRunID,
+    suggested_minutes: Math.max(0, input.observedMinutes - input.unattendedAgentRuntimeMinutes - input.idleWaitMinutes),
+    suggested_description: input.suggestedDescription,
+    excluded_agent_runtime_minutes: input.unattendedAgentRuntimeMinutes,
+    excluded_idle_wait_minutes: input.idleWaitMinutes,
+  }
+}
+
 export function validatePlanDecision(input: PlanDecisionValidationInput) {
   if (!input.reviewerIDs.includes(input.actorID)) return "unauthorized" as const
   if (input.currentPlanID !== input.requestedPlanID) return "stale_plan" as const
