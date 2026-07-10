@@ -681,6 +681,16 @@ const adaptGroup17 = (raw: RawClient["server.projectCopy"]) => ({
   refresh: Endpoint17_2(raw),
 })
 
+const Endpoint18_0 = (raw: RawClient["server.aiLooper"]) => () =>
+  raw["aiLooper.task.list"]({}).pipe(Effect.mapError(mapClientError))
+
+type Endpoint18_1Request = Parameters<RawClient["server.aiLooper"]["aiLooper.task.get"]>[0]
+type Endpoint18_1Input = { readonly taskCapsuleID: Endpoint18_1Request["params"]["taskCapsuleID"] }
+const Endpoint18_1 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_1Input) =>
+  raw["aiLooper.task.get"]({ params: { taskCapsuleID: input["taskCapsuleID"] } }).pipe(Effect.mapError(mapClientError))
+
+const adaptGroup18 = (raw: RawClient["server.aiLooper"]) => ({ list: Endpoint18_0(raw), get: Endpoint18_1(raw) })
+
 const adaptClient = (raw: RawClient) => ({
   health: adaptGroup0(raw["server.health"]),
   location: adaptGroup1(raw["server.location"]),
@@ -700,6 +710,7 @@ const adaptClient = (raw: RawClient) => ({
   questions: adaptGroup15(raw["server.question"]),
   references: adaptGroup16(raw["server.reference"]),
   projectCopies: adaptGroup17(raw["server.projectCopy"]),
+  "server.aiLooper": adaptGroup18(raw["server.aiLooper"]),
 })
 
 export const make = (options?: { readonly baseUrl?: URL | string }) =>

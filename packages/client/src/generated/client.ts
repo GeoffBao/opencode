@@ -112,6 +112,9 @@ import type {
   ProjectCopiesRemoveOutput,
   ProjectCopiesRefreshInput,
   ProjectCopiesRefreshOutput,
+  ServerAiLooperListOutput,
+  ServerAiLooperGetInput,
+  ServerAiLooperGetOutput,
 } from "./types"
 import { ClientError } from "./client-error"
 
@@ -983,6 +986,30 @@ export function make(options: ClientOptions) {
             successStatus: 204,
             declaredStatuses: [400, 401],
             empty: true,
+          },
+          requestOptions,
+        ),
+    },
+    "server.aiLooper": {
+      list: (requestOptions?: RequestOptions) =>
+        request<ServerAiLooperListOutput>(
+          {
+            method: "GET",
+            path: `/api/ai-looper/tasks`,
+            successStatus: 200,
+            declaredStatuses: [401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      get: (input: ServerAiLooperGetInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperGetOutput>(
+          {
+            method: "GET",
+            path: `/api/ai-looper/tasks/${encodeURIComponent(input.taskCapsuleID)}`,
+            successStatus: 200,
+            declaredStatuses: [404, 401, 400],
+            empty: false,
           },
           requestOptions,
         ),

@@ -101,6 +101,14 @@ export type ProjectCopyError = {
 export const isProjectCopyError = (value: unknown): value is ProjectCopyError =>
   typeof value === "object" && value !== null && "name" in value && value["name"] === "ProjectCopyError"
 
+export type AiLooperTaskNotFoundError = {
+  readonly _tag: "AiLooperTaskNotFoundError"
+  readonly taskCapsuleID: string
+  readonly message: string
+}
+export const isAiLooperTaskNotFoundError = (value: unknown): value is AiLooperTaskNotFoundError =>
+  typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "AiLooperTaskNotFoundError"
+
 export type HealthGetOutput = { readonly healthy: true }
 
 export type LocationGetInput = {
@@ -2805,3 +2813,95 @@ export type ProjectCopiesRefreshInput = {
 }
 
 export type ProjectCopiesRefreshOutput = void
+
+export type ServerAiLooperListOutput = {
+  readonly tasks: ReadonlyArray<{
+    readonly task_capsule_id: string
+    readonly source_task_id: string
+    readonly title: string
+    readonly source_status?: string | undefined
+    readonly work_item_type: "feature" | "task" | "bug" | "unknown"
+    readonly execution_track?: "spec_driven" | "standard_task" | "bugfix" | undefined
+    readonly active_task_run_id?: string | undefined
+  }>
+}
+
+export type ServerAiLooperGetInput = { readonly taskCapsuleID: { readonly taskCapsuleID: string }["taskCapsuleID"] }
+
+export type ServerAiLooperGetOutput = {
+  readonly task_capsule: {
+    readonly task_capsule_id: string
+    readonly source_task_id: string
+    readonly title: string
+    readonly source_status?: string | undefined
+    readonly work_item_type: "feature" | "task" | "bug" | "unknown"
+    readonly execution_track?: "spec_driven" | "standard_task" | "bugfix" | undefined
+    readonly active_task_run_id?: string | undefined
+  }
+  readonly source_task: {
+    readonly source_task_id: string
+    readonly source_system: "teambition"
+    readonly title: string
+    readonly description?: string | undefined
+    readonly source_status?: string | undefined
+    readonly priority?: string | undefined
+    readonly deadline?: string | undefined
+    readonly work_item_type: "feature" | "task" | "bug" | "unknown"
+    readonly assignee_ids: ReadonlyArray<string>
+    readonly project_id?: string | undefined
+    readonly project_config_ref?: string | undefined
+    readonly attachment_refs: ReadonlyArray<string>
+    readonly acceptance_criteria: ReadonlyArray<{
+      readonly acceptance_criterion_id: string
+      readonly text: string
+      readonly source_ref: string
+    }>
+    readonly source_version: string
+    readonly retrieved_at: string
+    readonly visibility_state: "visible" | "missing" | "inaccessible" | "deleted" | "archived" | "reassigned"
+  }
+  readonly current_task_run?:
+    | {
+        readonly task_run_id: string
+        readonly task_capsule_id: string
+        readonly execution_track: "spec_driven" | "standard_task" | "bugfix"
+        readonly gate_state:
+          | "not_required"
+          | "awaiting_confirmation"
+          | "confirmed"
+          | "awaiting_formal_approval"
+          | "formally_approved"
+          | "rejected"
+          | "escalated"
+        readonly phase:
+          | "received"
+          | "analyzing"
+          | "planning"
+          | "plan_review"
+          | "implementing"
+          | "verifying"
+          | "reporting"
+          | "time_confirmation"
+          | "completed"
+          | "cancelled"
+        readonly disposition: "running" | "waiting" | "blocked" | "escalated"
+        readonly lifecycle: "active" | "completed" | "cancelled" | "archived"
+        readonly latest_committed_step: string
+        readonly next_expected_action?: string | undefined
+        readonly responsible_role?: string | undefined
+        readonly retry_count: number
+        readonly retry_budget: number
+        readonly last_attempt_at?: string | undefined
+        readonly next_wake_at?: string | undefined
+        readonly blocked_reason?: string | undefined
+        readonly blocked_owner?: string | undefined
+        readonly blocked_since?: string | undefined
+        readonly escalation_reason?: string | undefined
+        readonly escalated_at?: string | undefined
+        readonly created_at: string
+        readonly updated_at: string
+        readonly completed_at?: string | undefined
+        readonly cancelled_at?: string | undefined
+      }
+    | undefined
+}
