@@ -182,8 +182,8 @@
 - [X] T083 [P] [US5] Add contract test for `POST /ai-looper/runs/{taskRunId}/human-evidence` in `packages/server/test/contract/ai-looper-human-evidence.test.ts`
 - [X] T084 [P] [US5] Add contract test for `POST /ai-looper/runs/{taskRunId}/delivery-summary` in `packages/server/test/contract/ai-looper-delivery-summary.test.ts`
 - [X] T085 [P] [US5] Add contract test for `POST /ai-looper/runs/{taskRunId}/worktime` in `packages/server/test/contract/ai-looper-worktime.test.ts`
-- [ ] T086 [P] [US5] Add completion guard test for missing, stale, conflicting, and unverifiable evidence in `packages/core/test/ai-looper/completion-guard.test.ts`
-- [ ] T087 [P] [US5] Add human acceptance evidence authorization test in `packages/core/test/ai-looper/human-evidence.test.ts`
+- [X] T086 [P] [US5] Add completion guard test for missing, stale, conflicting, and unverifiable evidence in `packages/core/test/ai-looper/completion-guard.test.ts`
+- [X] T087 [P] [US5] Add human acceptance evidence authorization test in `packages/core/test/ai-looper/human-evidence.test.ts`
 - [ ] T088 [P] [US5] Add delivery summary and worktime idempotency test in `packages/core/test/ai-looper/teambition-writes.test.ts`
 - [ ] T089 [P] [US5] Add worktime responsible-engineer boundary test in `packages/core/test/ai-looper/worktime-authority.test.ts`
 
