@@ -77,6 +77,32 @@ export interface ExecutionAttempt {
   readonly progress_summary: string
 }
 
+export interface ExecutionAttemptSummary {
+  readonly execution_attempt_id: AiLooper.ID
+  readonly task_run_id: AiLooper.ID
+  readonly attempt_type: "analysis" | "planning" | "implementation" | "validation" | "reporting" | "recovery"
+  readonly outcome: "succeeded" | "failed" | "blocked" | "cancelled"
+  readonly started_at: string
+  readonly ended_at?: string
+  readonly progress_summary?: string
+}
+
+export interface TaskRunDetailQueryInput {
+  readonly taskRun: AiLooper.TaskRun
+  readonly artifacts?: ReadonlyArray<AiLooper.Artifact>
+  readonly evidence?: ReadonlyArray<AiLooper.Evidence>
+  readonly attempts?: ReadonlyArray<ExecutionAttempt>
+  readonly auditRecords?: ReadonlyArray<AiLooper.AuditRecord>
+}
+
+export interface TaskRunDetail {
+  readonly task_run: AiLooper.TaskRun
+  readonly artifacts: ReadonlyArray<AiLooper.Artifact>
+  readonly evidence: ReadonlyArray<AiLooper.Evidence>
+  readonly attempts: ReadonlyArray<ExecutionAttemptSummary>
+  readonly audit_records: ReadonlyArray<AiLooper.AuditRecord>
+}
+
 export interface TaskRunCancellationInput {
   readonly taskRun: AiLooper.TaskRun
   readonly actorID: AiLooper.ID
@@ -177,6 +203,26 @@ export function cancelTaskRun(input: TaskRunCancellationInput) {
       external_write_ids: unresolvedExternalWriteIDs(input.externalWrites ?? []),
     },
   }
+}
+
+export function createTaskRunDetail(input: TaskRunDetailQueryInput) {
+  return {
+    task_run: input.taskRun,
+    artifacts: byTaskRun(input.artifacts ?? [], input.taskRun.task_run_id),
+    evidence: byTaskRun(input.evidence ?? [], input.taskRun.task_run_id),
+    attempts: (input.attempts ?? [])
+      .filter((attempt) => attempt.task_run_id === input.taskRun.task_run_id)
+      .map((attempt) => ({
+        execution_attempt_id: attempt.execution_attempt_id,
+        task_run_id: attempt.task_run_id,
+        attempt_type: detailAttemptType(attempt.attempt_type),
+        outcome: detailAttemptOutcome(attempt.outcome),
+        started_at: attempt.started_at,
+        ended_at: attempt.ended_at,
+        progress_summary: attempt.progress_summary,
+      })),
+    audit_records: byTaskRun(input.auditRecords ?? [], input.taskRun.task_run_id),
+  } satisfies TaskRunDetail
 }
 
 export function createOrReuseTaskRun(input: TaskRunCreationInput) {
@@ -323,4 +369,21 @@ function unresolvedExternalWriteIDs(externalWrites: ReadonlyArray<AiLooper.Exter
         externalWrite.status === "pending" || externalWrite.status === "sent" || externalWrite.status === "retrying",
     )
     .map((externalWrite) => externalWrite.external_write_id)
+}
+
+function byTaskRun<T extends { readonly task_run_id: AiLooper.ID }>(items: ReadonlyArray<T>, taskRunID: AiLooper.ID) {
+  return items.filter((item) => item.task_run_id === taskRunID)
+}
+
+function detailAttemptType(attemptType: ExecutionAttempt["attempt_type"]): ExecutionAttemptSummary["attempt_type"] {
+  if (attemptType === "runtime_execution") return "implementation"
+  if (attemptType === "verification") return "validation"
+  if (attemptType === "external_write") return "reporting"
+  return attemptType
+}
+
+function detailAttemptOutcome(outcome: ExecutionAttempt["outcome"]): ExecutionAttemptSummary["outcome"] {
+  if (outcome === "succeeded") return "succeeded"
+  if (outcome === "blocked") return "blocked"
+  return "failed"
 }

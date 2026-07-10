@@ -1,6 +1,7 @@
 import { Context, Effect, Layer, Schema } from "effect"
 import { AiLooper } from "@opencode-ai/schema/ai-looper"
 import { makeGlobalNode } from "../effect/app-node"
+import type { TaskRunDetail } from "./taskrun"
 
 export namespace AILooperWorkbench {
   export type TaskSummary = {
@@ -17,24 +18,6 @@ export namespace AILooperWorkbench {
     readonly task_capsule: TaskSummary
     readonly source_task: AiLooper.SourceTask
     readonly current_task_run?: AiLooper.TaskRun
-  }
-
-  export type ExecutionAttemptSummary = {
-    readonly execution_attempt_id: AiLooper.ID
-    readonly task_run_id: AiLooper.ID
-    readonly attempt_type: "analysis" | "planning" | "implementation" | "validation" | "reporting" | "recovery"
-    readonly outcome: "succeeded" | "failed" | "blocked" | "cancelled"
-    readonly started_at: string
-    readonly ended_at?: string
-    readonly progress_summary?: string
-  }
-
-  export type TaskRunDetail = {
-    readonly task_run: AiLooper.TaskRun
-    readonly artifacts: AiLooper.Artifact[]
-    readonly evidence: AiLooper.Evidence[]
-    readonly attempts: ExecutionAttemptSummary[]
-    readonly audit_records: AiLooper.AuditRecord[]
   }
 
   export class UnavailableError extends Schema.TaggedErrorClass<UnavailableError>()("AILooperWorkbench.UnavailableError", {

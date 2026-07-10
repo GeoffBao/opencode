@@ -159,7 +159,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T076 [US4] Implement TaskRun detail query with artifacts, evidence, attempts, waits, blockers, and audit records in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T076 [US4] Implement TaskRun detail query with artifacts, evidence, attempts, waits, blockers, and audit records in `packages/core/src/ai-looper/taskrun.ts`
 - [X] T077 [US4] Implement `GET /ai-looper/runs/{taskRunId}` handler in `packages/server/src/handlers/ai-looper.ts`
 - [X] T078 [US4] Implement `POST /ai-looper/runs/{taskRunId}/cancel` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T079 [US4] Render phase, disposition, lifecycle, responsible role, next action, blockers, and timestamps in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`

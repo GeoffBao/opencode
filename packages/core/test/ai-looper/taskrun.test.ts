@@ -10,6 +10,7 @@ import {
   createOrReuseTaskRun,
   createRequirementInterpretationArtifact,
   createSourceTaskSnapshotArtifact,
+  createTaskRunDetail,
   createTaskCapsule,
   findActiveTaskRun,
 } from "@opencode-ai/core/ai-looper/taskrun"
@@ -127,6 +128,48 @@ describe("AILooper TaskRun guards", () => {
       content_ref: "lightweight_task_brief:run_1:2:source:v1",
     })
   })
+
+  test("creates TaskRun detail read models for UI and API consumers", () => {
+    expect(
+      createTaskRunDetail({
+        taskRun: taskRun("active"),
+        artifacts: [
+          artifact("art_plan", "run_active"),
+          artifact("art_other", "run_other"),
+        ],
+        evidence: [evidence("ev_test", "run_active")],
+        attempts: [
+          {
+            execution_attempt_id: "attempt_1",
+            task_run_id: "run_active",
+            attempt_type: "runtime_execution",
+            runtime_adapter: "opencode",
+            input_artifact_refs: ["art_plan"],
+            output_artifact_refs: [],
+            evidence_refs: [],
+            started_at: "2026-07-10T00:10:00.000Z",
+            ended_at: "2026-07-10T00:20:00.000Z",
+            outcome: "no_progress",
+            progress_summary: "No code changes committed",
+          },
+        ],
+        auditRecords: [auditRecord("audit_1", "run_active"), auditRecord("audit_other", "run_other")],
+      }),
+    ).toMatchObject({
+      task_run: { task_run_id: "run_active" },
+      artifacts: [{ artifact_id: "art_plan" }],
+      evidence: [{ evidence_id: "ev_test" }],
+      attempts: [
+        {
+          execution_attempt_id: "attempt_1",
+          attempt_type: "implementation",
+          outcome: "failed",
+          progress_summary: "No code changes committed",
+        },
+      ],
+      audit_records: [{ audit_record_id: "audit_1" }],
+    })
+  })
 })
 
 function teambitionTask(workItemType: AiLooper.WorkItemType, visibilityState: AiLooper.VisibilityState) {
@@ -159,4 +202,37 @@ function taskRun(lifecycle: AiLooper.Lifecycle) {
     created_at: "2026-07-10T00:00:00.000Z",
     updated_at: "2026-07-10T00:00:00.000Z",
   })
+}
+
+function artifact(artifactID: AiLooper.ID, taskRunID: AiLooper.ID) {
+  return {
+    artifact_id: artifactID,
+    task_run_id: taskRunID,
+    artifact_type: "execution_plan",
+    version: 1,
+    provenance: "ai-looper",
+    created_at: "2026-07-10T00:00:00.000Z",
+  } satisfies AiLooper.Artifact
+}
+
+function evidence(evidenceID: AiLooper.ID, taskRunID: AiLooper.ID) {
+  return {
+    evidence_id: evidenceID,
+    task_run_id: taskRunID,
+    evidence_type: "automated_test",
+    result: "pass",
+    artifact_refs: [],
+    observed_at: "2026-07-10T00:00:00.000Z",
+  } satisfies AiLooper.Evidence
+}
+
+function auditRecord(auditRecordID: AiLooper.ID, taskRunID: AiLooper.ID) {
+  return {
+    audit_record_id: auditRecordID,
+    task_run_id: taskRunID,
+    actor_or_source: "ai-looper",
+    action_type: "taskrun.detail_viewed",
+    related_artifact_refs: [],
+    created_at: "2026-07-10T00:00:00.000Z",
+  } satisfies AiLooper.AuditRecord
 }
