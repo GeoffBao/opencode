@@ -77,6 +77,16 @@ export interface ExecutionAttempt {
   readonly progress_summary: string
 }
 
+export interface TaskRunCancellationInput {
+  readonly taskRun: AiLooper.TaskRun
+  readonly actorID: AiLooper.ID
+  readonly authorizedActorIDs: ReadonlyArray<AiLooper.ID>
+  readonly reason: string
+  readonly now: string
+  readonly attempts?: ReadonlyArray<ExecutionAttempt>
+  readonly externalWrites?: ReadonlyArray<AiLooper.ExternalWrite>
+}
+
 export function createSourceTaskSnapshotArtifact(input: SourceTaskSnapshotInput): AiLooper.Artifact {
   return {
     artifact_id: input.artifactID,
@@ -141,6 +151,31 @@ export function applyAttemptOutcome(input: {
     ...input.taskRun,
     last_attempt_at: input.attempt.ended_at,
     updated_at: input.attempt.ended_at,
+  }
+}
+
+export function cancelTaskRun(input: TaskRunCancellationInput) {
+  if (!input.authorizedActorIDs.includes(input.actorID)) {
+    return { status: "unauthorized" as const, taskRun: input.taskRun }
+  }
+  if (input.taskRun.lifecycle !== "active") {
+    return { status: "not_active" as const, taskRun: input.taskRun }
+  }
+  return {
+    status: "cancelled" as const,
+    taskRun: {
+      ...input.taskRun,
+      phase: "cancelled" as const,
+      lifecycle: "cancelled" as const,
+      latest_committed_step: "TaskRun cancelled by authorized human",
+      next_expected_action: "review_unresolved_cancellation_effects",
+      cancelled_at: input.now,
+      updated_at: input.now,
+    } satisfies AiLooper.TaskRun,
+    unresolvedEffects: {
+      execution_attempt_ids: unresolvedAttemptIDs(input.attempts ?? []),
+      external_write_ids: unresolvedExternalWriteIDs(input.externalWrites ?? []),
+    },
   }
 }
 
@@ -270,4 +305,22 @@ function applyNoProgress(
     last_attempt_at: attempt.ended_at,
     updated_at: attempt.ended_at,
   }
+}
+
+function unresolvedAttemptIDs(attempts: ReadonlyArray<ExecutionAttempt>) {
+  return attempts
+    .filter(
+      (attempt) =>
+        attempt.outcome === "interrupted" || attempt.outcome === "blocked" || attempt.outcome === "no_progress",
+    )
+    .map((attempt) => attempt.execution_attempt_id)
+}
+
+function unresolvedExternalWriteIDs(externalWrites: ReadonlyArray<AiLooper.ExternalWrite>) {
+  return externalWrites
+    .filter(
+      (externalWrite) =>
+        externalWrite.status === "pending" || externalWrite.status === "sent" || externalWrite.status === "retrying",
+    )
+    .map((externalWrite) => externalWrite.external_write_id)
 }

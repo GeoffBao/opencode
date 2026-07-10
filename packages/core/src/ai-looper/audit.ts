@@ -173,4 +173,37 @@ export namespace AILooperAudit {
       now: input.now,
     })
   }
+
+  export function interventionRecorded(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly interventionType: string
+    readonly reason: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: `intervention.${input.interventionType}`,
+      reasonOrEvidence: input.reason,
+      now: input.now,
+    })
+  }
+
+  export function cancellationRecorded(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly reason: string
+    readonly unresolvedEffectRefs?: ReadonlyArray<string>
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: "taskrun.cancelled",
+      reasonOrEvidence: input.reason,
+      relatedArtifactRefs: input.unresolvedEffectRefs,
+      now: input.now,
+    })
+  }
 }

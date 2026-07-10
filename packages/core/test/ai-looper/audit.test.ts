@@ -117,4 +117,34 @@ describe("AILooper audit", () => {
       }),
     ).toMatchObject({ action_type: "taskrun.escalated" })
   })
+
+  test("records human interventions and cancellations", () => {
+    expect(
+      AILooperAudit.interventionRecorded({
+        taskRunID: "trn_1",
+        actorID: "lead_1",
+        interventionType: "manual_unblock",
+        reason: "Dependency clarified in Teambition",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      actor_or_source: "lead_1",
+      action_type: "intervention.manual_unblock",
+      reason_or_evidence: "Dependency clarified in Teambition",
+    })
+    expect(
+      AILooperAudit.cancellationRecorded({
+        taskRunID: "trn_1",
+        actorID: "lead_1",
+        reason: "Requirement withdrawn",
+        unresolvedEffectRefs: ["external_write:write_1", "execution_attempt:attempt_1"],
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      actor_or_source: "lead_1",
+      action_type: "taskrun.cancelled",
+      reason_or_evidence: "Requirement withdrawn",
+      related_artifact_refs: ["external_write:write_1", "execution_attempt:attempt_1"],
+    })
+  })
 })
