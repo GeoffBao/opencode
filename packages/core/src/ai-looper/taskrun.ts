@@ -30,6 +30,38 @@ export interface TaskCapsuleInput {
   readonly createdAt: string
 }
 
+export interface PlanDecisionValidationInput {
+  readonly currentPlanID: AiLooper.ID
+  readonly currentPlanVersion: number
+  readonly requestedPlanID: AiLooper.ID
+  readonly requestedPlanVersion: number
+  readonly reviewerIDs: ReadonlyArray<string>
+  readonly actorID: AiLooper.ID
+}
+
+export interface LightweightBriefConfirmationInput {
+  readonly taskRun: Pick<AiLooper.TaskRun, "execution_track" | "gate_state">
+  readonly confirmedBy: AiLooper.ID
+  readonly responsibleEngineerID: AiLooper.ID
+}
+
+export interface TaskRunCreationInput {
+  readonly taskRunID: AiLooper.ID
+  readonly taskCapsuleID: AiLooper.ID
+  readonly executionTrack: AiLooper.ExecutionTrack
+  readonly existingTaskRuns?: ReadonlyArray<AiLooper.TaskRun>
+  readonly createdAt: string
+}
+
+export interface VersionedArtifactInput {
+  readonly artifactID: AiLooper.ID
+  readonly taskRunID: AiLooper.ID
+  readonly sourceVersion?: string
+  readonly version: number
+  readonly createdAt: string
+  readonly createdBy: string
+}
+
 export function createSourceTaskSnapshotArtifact(input: SourceTaskSnapshotInput): AiLooper.Artifact {
   return {
     artifact_id: input.artifactID,
@@ -62,6 +94,57 @@ export function findActiveTaskRun(taskRuns: ReadonlyArray<AiLooper.TaskRun>) {
   return taskRuns.find((taskRun) => taskRun.lifecycle === "active")
 }
 
+export function createOrReuseTaskRun(input: TaskRunCreationInput) {
+  const existing = findActiveTaskRun(input.existingTaskRuns ?? [])
+  if (existing) return { taskRun: existing, reused: true as const }
+
+  return {
+    taskRun: {
+      task_run_id: input.taskRunID,
+      task_capsule_id: input.taskCapsuleID,
+      execution_track: input.executionTrack,
+      gate_state: initialGateState(input.executionTrack),
+      phase: initialPhase(input.executionTrack),
+      disposition: initialDisposition(input.executionTrack),
+      lifecycle: "active",
+      latest_committed_step: "TaskRun created",
+      next_expected_action: initialNextAction(input.executionTrack),
+      retry_count: 0,
+      retry_budget: 3,
+      created_at: input.createdAt,
+      updated_at: input.createdAt,
+    } satisfies AiLooper.TaskRun,
+    reused: false as const,
+  }
+}
+
+export function createRequirementInterpretationArtifact(input: VersionedArtifactInput): AiLooper.Artifact {
+  return versionedArtifact(input, "requirement_interpretation", `requirement_interpretation:${input.taskRunID}:${input.version}`)
+}
+
+export function createExecutionPlanArtifact(input: VersionedArtifactInput): AiLooper.Artifact {
+  return versionedArtifact(input, "execution_plan", `execution_plan:${input.taskRunID}:${input.version}`)
+}
+
+export function createLightweightTaskBriefArtifact(input: VersionedArtifactInput): AiLooper.Artifact {
+  return versionedArtifact(input, "lightweight_task_brief", `lightweight_task_brief:${input.taskRunID}:${input.version}`)
+}
+
+export function validatePlanDecision(input: PlanDecisionValidationInput) {
+  if (!input.reviewerIDs.includes(input.actorID)) return "unauthorized" as const
+  if (input.currentPlanID !== input.requestedPlanID) return "stale_plan" as const
+  if (input.currentPlanVersion !== input.requestedPlanVersion) return "stale_plan" as const
+  return "accepted" as const
+}
+
+export function canConfirmLightweightBrief(input: LightweightBriefConfirmationInput) {
+  return (
+    input.taskRun.execution_track === "standard_task" &&
+    input.taskRun.gate_state === "awaiting_confirmation" &&
+    input.confirmedBy === input.responsibleEngineerID
+  )
+}
+
 export function canStartImplementation(taskRun: Pick<AiLooper.TaskRun, "execution_track" | "gate_state">) {
   if (taskRun.execution_track === "spec_driven") return taskRun.gate_state === "formally_approved"
   if (taskRun.execution_track === "standard_task") return taskRun.gate_state === "confirmed"
@@ -76,4 +159,38 @@ export function canTransition(input: TransitionInput) {
   }
   if (input.nextPhase === "completed") return input.requiredEvidencePresent === true
   return true
+}
+
+function initialGateState(executionTrack: AiLooper.ExecutionTrack): AiLooper.GateState {
+  if (executionTrack === "spec_driven") return "awaiting_formal_approval"
+  if (executionTrack === "standard_task") return "awaiting_confirmation"
+  return "awaiting_confirmation"
+}
+
+function initialPhase(executionTrack: AiLooper.ExecutionTrack): AiLooper.Phase {
+  if (executionTrack === "spec_driven") return "plan_review"
+  return "planning"
+}
+
+function initialDisposition(executionTrack: AiLooper.ExecutionTrack): AiLooper.Disposition {
+  if (executionTrack === "spec_driven") return "waiting"
+  return "running"
+}
+
+function initialNextAction(executionTrack: AiLooper.ExecutionTrack) {
+  if (executionTrack === "spec_driven") return "await_formal_plan_approval"
+  if (executionTrack === "standard_task") return "await_engineer_brief_confirmation"
+  return "record_bug_reproduction"
+}
+
+function versionedArtifact(input: VersionedArtifactInput, artifactType: AiLooper.ArtifactType, contentRef: string) {
+  return {
+    artifact_id: input.artifactID,
+    task_run_id: input.taskRunID,
+    artifact_type: artifactType,
+    version: input.version,
+    content_ref: input.sourceVersion ? `${contentRef}:source:${input.sourceVersion}` : contentRef,
+    provenance: input.createdBy,
+    created_at: input.createdAt,
+  } satisfies AiLooper.Artifact
 }

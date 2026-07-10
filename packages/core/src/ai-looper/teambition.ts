@@ -30,4 +30,14 @@ export namespace AILooperTeambition {
   export function isSourceContentAvailable(sourceTask: AiLooper.SourceTask) {
     return sourceTask.visibility_state === "visible"
   }
+
+  export async function resolveAuthorizedReviewers(adapter: Adapter, sourceTask: AiLooper.SourceTask) {
+    return [...new Set(await adapter.resolveReviewerPolicy(decodeSourceTask(sourceTask)))].filter(
+      (reviewerID) => reviewerID.length > 0,
+    )
+  }
+
+  export function canReviewPlan(reviewerIDs: ReadonlyArray<string>, actorID: string) {
+    return reviewerIDs.includes(actorID)
+  }
 }

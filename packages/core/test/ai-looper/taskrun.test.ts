@@ -5,6 +5,10 @@ import {
   canStartImplementation,
   canTransition,
   canViewSourceTask,
+  createExecutionPlanArtifact,
+  createLightweightTaskBriefArtifact,
+  createOrReuseTaskRun,
+  createRequirementInterpretationArtifact,
   createSourceTaskSnapshotArtifact,
   createTaskCapsule,
   findActiveTaskRun,
@@ -68,6 +72,60 @@ describe("AILooper TaskRun guards", () => {
       active_task_run_id: "run_active",
     })
     expect(findActiveTaskRun([taskRun("completed"), taskRun("active")])?.task_run_id).toBe("run_active")
+  })
+
+  test("creates TaskRuns once and reuses active runs idempotently", () => {
+    expect(
+      createOrReuseTaskRun({
+        taskRunID: "run_1",
+        taskCapsuleID: "cap_1",
+        executionTrack: "spec_driven",
+        createdAt: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      reused: false,
+      taskRun: {
+        gate_state: "awaiting_formal_approval",
+        phase: "plan_review",
+        disposition: "waiting",
+      },
+    })
+    expect(
+      createOrReuseTaskRun({
+        taskRunID: "run_new",
+        taskCapsuleID: "cap_1",
+        executionTrack: "standard_task",
+        existingTaskRuns: [taskRun("active")],
+        createdAt: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ reused: true, taskRun: { task_run_id: "run_active" } })
+  })
+
+  test("creates versioned requirement, plan, and lightweight brief artifacts", () => {
+    const input = {
+      artifactID: "art_1",
+      taskRunID: "run_1",
+      sourceVersion: "v1",
+      version: 2,
+      createdAt: "2026-07-10T00:00:00.000Z",
+      createdBy: "ai-looper",
+    }
+
+    expect(createRequirementInterpretationArtifact(input)).toMatchObject({
+      artifact_type: "requirement_interpretation",
+      version: 2,
+      content_ref: "requirement_interpretation:run_1:2:source:v1",
+    })
+    expect(createExecutionPlanArtifact(input)).toMatchObject({
+      artifact_type: "execution_plan",
+      version: 2,
+      content_ref: "execution_plan:run_1:2:source:v1",
+    })
+    expect(createLightweightTaskBriefArtifact(input)).toMatchObject({
+      artifact_type: "lightweight_task_brief",
+      version: 2,
+      content_ref: "lightweight_task_brief:run_1:2:source:v1",
+    })
   })
 })
 

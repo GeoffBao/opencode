@@ -92,20 +92,20 @@
 
 - [X] T042 [P] [US2] Add contract test for `POST /ai-looper/tasks/{taskCapsuleId}/runs` in `packages/server/test/contract/ai-looper-create-run.test.ts`
 - [X] T043 [P] [US2] Add contract test for `POST /ai-looper/runs/{taskRunId}/plan/decision` in `packages/server/test/contract/ai-looper-plan-decision.test.ts`
-- [ ] T044 [P] [US2] Add authorization test for reviewer resolution from Teambition task/project config in `packages/core/test/ai-looper/approval-authority.test.ts`
-- [ ] T045 [P] [US2] Add stale plan approval rejection test in `packages/core/test/ai-looper/plan-version.test.ts`
-- [ ] T046 [P] [US2] Add standard-task lightweight brief confirmation test in `packages/core/test/ai-looper/lightweight-brief.test.ts`
-- [ ] T047 [P] [US2] Add bugfix reproduction and high-risk escalation test in `packages/core/test/ai-looper/bugfix-gate.test.ts`
+- [X] T044 [P] [US2] Add authorization test for reviewer resolution from Teambition task/project config in `packages/core/test/ai-looper/approval-authority.test.ts`
+- [X] T045 [P] [US2] Add stale plan approval rejection test in `packages/core/test/ai-looper/plan-version.test.ts`
+- [X] T046 [P] [US2] Add standard-task lightweight brief confirmation test in `packages/core/test/ai-looper/lightweight-brief.test.ts`
+- [X] T047 [P] [US2] Add bugfix reproduction and high-risk escalation test in `packages/core/test/ai-looper/bugfix-gate.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T048 [US2] Implement TaskRun creation and idempotent reuse in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T049 [US2] Implement RequirementInterpretation artifact creation for spec-driven runs in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T050 [US2] Implement ExecutionPlan artifact creation and versioning in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T051 [US2] Implement LightweightTaskBrief artifact creation and engineer confirmation in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T052 [US2] Implement bug reproduction evidence and fix-plan confirmation gate in `packages/core/src/ai-looper/evidence.ts`
-- [ ] T053 [US2] Implement reviewer resolution from Teambition task/project config in `packages/core/src/ai-looper/teambition.ts`
-- [ ] T054 [US2] Implement approval decision validation for exact plan version and authority in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T048 [US2] Implement TaskRun creation and idempotent reuse in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T049 [US2] Implement RequirementInterpretation artifact creation for spec-driven runs in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T050 [US2] Implement ExecutionPlan artifact creation and versioning in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T051 [US2] Implement LightweightTaskBrief artifact creation and engineer confirmation in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T052 [US2] Implement bug reproduction evidence and fix-plan confirmation gate in `packages/core/src/ai-looper/evidence.ts`
+- [X] T053 [US2] Implement reviewer resolution from Teambition task/project config in `packages/core/src/ai-looper/teambition.ts`
+- [X] T054 [US2] Implement approval decision validation for exact plan version and authority in `packages/core/src/ai-looper/taskrun.ts`
 - [ ] T055 [US2] Implement `POST /ai-looper/tasks/{taskCapsuleId}/runs` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T056 [US2] Implement `POST /ai-looper/runs/{taskRunId}/plan/decision` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T057 [US2] Render plan review, lightweight brief confirmation, and bugfix gate UI in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`

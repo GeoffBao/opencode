@@ -20,4 +20,17 @@ export namespace AILooperEvidence {
       evidence.audit_record_id !== undefined
     )
   }
+
+  export function hasBugReproductionEvidence(evidence: ReadonlyArray<Pick<AiLooper.Evidence, "evidence_type" | "result">>) {
+    return evidence.some((item) => item.evidence_type === "bug_reproduction" && item.result === "pass")
+  }
+
+  export function canConfirmBugfixPlan(input: {
+    readonly highRisk: boolean
+    readonly evidence: ReadonlyArray<Pick<AiLooper.Evidence, "evidence_type" | "result">>
+  }) {
+    if (input.highRisk) return "requires_formal_approval" as const
+    if (!hasBugReproductionEvidence(input.evidence)) return "requires_reproduction" as const
+    return "can_confirm" as const
+  }
 }
