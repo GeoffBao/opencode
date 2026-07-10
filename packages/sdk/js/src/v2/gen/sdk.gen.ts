@@ -265,6 +265,26 @@ import type {
   TuiSubmitPromptResponses,
   V2AgentListErrors,
   V2AgentListResponses,
+  V2AiLooperEventIngestErrors,
+  V2AiLooperEventIngestResponses,
+  V2AiLooperPlanDecideErrors,
+  V2AiLooperPlanDecideResponses,
+  V2AiLooperRunCancelErrors,
+  V2AiLooperRunCancelResponses,
+  V2AiLooperRunDeliverySummaryErrors,
+  V2AiLooperRunDeliverySummaryResponses,
+  V2AiLooperRunGetErrors,
+  V2AiLooperRunGetResponses,
+  V2AiLooperRunHumanEvidenceErrors,
+  V2AiLooperRunHumanEvidenceResponses,
+  V2AiLooperRunWorktimeErrors,
+  V2AiLooperRunWorktimeResponses,
+  V2AiLooperTaskGetErrors,
+  V2AiLooperTaskGetResponses,
+  V2AiLooperTaskListErrors,
+  V2AiLooperTaskListResponses,
+  V2AiLooperTaskRunCreateErrors,
+  V2AiLooperTaskRunCreateResponses,
   V2CommandListErrors,
   V2CommandListResponses,
   V2CredentialRemoveErrors,
@@ -6987,6 +7007,390 @@ export class ProjectCopy2 extends HeyApiClient {
   }
 }
 
+export class Task extends HeyApiClient {
+  /**
+   * List AI Looper tasks
+   *
+   * List Teambition-backed AI Looper task capsules assigned to the current engineer.
+   */
+  public list<ThrowOnError extends boolean = false>(options?: Options<never, ThrowOnError>) {
+    return (options?.client ?? this.client).get<V2AiLooperTaskListResponses, V2AiLooperTaskListErrors, ThrowOnError>({
+      url: "/api/ai-looper/tasks",
+      ...options,
+    })
+  }
+
+  /**
+   * Get AI Looper task context
+   *
+   * Read source task context, acceptance criteria, and the current TaskRun when one exists.
+   */
+  public get<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskCapsuleID: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams([parameters], [{ args: [{ in: "path", key: "taskCapsuleID" }] }])
+    return (options?.client ?? this.client).get<V2AiLooperTaskGetResponses, V2AiLooperTaskGetErrors, ThrowOnError>({
+      url: "/api/ai-looper/tasks/{taskCapsuleID}",
+      ...options,
+      ...params,
+    })
+  }
+}
+
+export class TaskRun extends HeyApiClient {
+  /**
+   * Create or reuse AI Looper TaskRun
+   *
+   * Start or reuse an active durable TaskRun for a task capsule and workspace.
+   */
+  public create<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskCapsuleID: string
+      workspace_ref?: string
+      idempotency_key?: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskCapsuleID" },
+            { in: "body", key: "workspace_ref" },
+            { in: "body", key: "idempotency_key" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperTaskRunCreateResponses,
+      V2AiLooperTaskRunCreateErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/tasks/{taskCapsuleID}/runs",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+}
+
+export class Run extends HeyApiClient {
+  /**
+   * Get AI Looper TaskRun detail
+   *
+   * Read durable TaskRun state with attempts, artifacts, evidence, and audit records.
+   */
+  public get<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams([parameters], [{ args: [{ in: "path", key: "taskRunID" }] }])
+    return (options?.client ?? this.client).get<V2AiLooperRunGetResponses, V2AiLooperRunGetErrors, ThrowOnError>({
+      url: "/api/ai-looper/runs/{taskRunID}",
+      ...options,
+      ...params,
+    })
+  }
+
+  /**
+   * Cancel AI Looper TaskRun
+   *
+   * Request human-authorized cancellation for a durable TaskRun and preserve auditability.
+   */
+  public cancel<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+      reason?: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskRunID" },
+            { in: "body", key: "reason" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<V2AiLooperRunCancelResponses, V2AiLooperRunCancelErrors, ThrowOnError>(
+      {
+        url: "/api/ai-looper/runs/{taskRunID}/cancel",
+        ...options,
+        ...params,
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+          ...params.headers,
+        },
+      },
+    )
+  }
+
+  /**
+   * Record human acceptance evidence
+   *
+   * Record authorized human evidence against one TaskRun acceptance criterion.
+   */
+  public humanEvidence<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+      acceptance_criterion_id?: string
+      result?: "pass" | "fail" | "inconclusive"
+      explanation?: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskRunID" },
+            { in: "body", key: "acceptance_criterion_id" },
+            { in: "body", key: "result" },
+            { in: "body", key: "explanation" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperRunHumanEvidenceResponses,
+      V2AiLooperRunHumanEvidenceErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/runs/{taskRunID}/human-evidence",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+
+  /**
+   * Queue Teambition delivery summary
+   *
+   * Queue an idempotent Teambition delivery summary write for a completed TaskRun.
+   */
+  public deliverySummary<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+      delivery_summary_artifact_id?: string
+      delivery_summary_version?: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskRunID" },
+            { in: "body", key: "delivery_summary_artifact_id" },
+            { in: "body", key: "delivery_summary_version" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperRunDeliverySummaryResponses,
+      V2AiLooperRunDeliverySummaryErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/runs/{taskRunID}/delivery-summary",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+
+  /**
+   * Queue confirmed worktime submission
+   *
+   * Queue a responsible-engineer-confirmed, idempotent Teambition worktime write.
+   */
+  public worktime<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+      worktime_draft_id?: string
+      confirmed_minutes?: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      confirmed_description?: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskRunID" },
+            { in: "body", key: "worktime_draft_id" },
+            { in: "body", key: "confirmed_minutes" },
+            { in: "body", key: "confirmed_description" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperRunWorktimeResponses,
+      V2AiLooperRunWorktimeErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/runs/{taskRunID}/worktime",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+}
+
+export class Plan extends HeyApiClient {
+  /**
+   * Approve or reject AI Looper execution plan
+   *
+   * Record an authorized decision for the exact current execution plan version.
+   */
+  public decide<ThrowOnError extends boolean = false>(
+    parameters: {
+      taskRunID: string
+      plan_id?: string
+      plan_version?: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      decision?: "approved" | "rejected"
+      comments?: string
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "path", key: "taskRunID" },
+            { in: "body", key: "plan_id" },
+            { in: "body", key: "plan_version" },
+            { in: "body", key: "decision" },
+            { in: "body", key: "comments" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperPlanDecideResponses,
+      V2AiLooperPlanDecideErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/runs/{taskRunID}/plan/decision",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+}
+
+export class Event3 extends HeyApiClient {
+  /**
+   * Ingest AI Looper external event
+   *
+   * Accept Teambition, UI, or runtime adapter events with duplicate reconciliation.
+   */
+  public ingest<ThrowOnError extends boolean = false>(
+    parameters?: {
+      source_system?: "teambition" | "ai_looper_ui" | "coding_runtime"
+      source_event_id?: string
+      event_type?: string
+      idempotency_key?: string
+      payload?: {
+        [key: string]: unknown
+      }
+    },
+    options?: Options<never, ThrowOnError>,
+  ) {
+    const params = buildClientParams(
+      [parameters],
+      [
+        {
+          args: [
+            { in: "body", key: "source_system" },
+            { in: "body", key: "source_event_id" },
+            { in: "body", key: "event_type" },
+            { in: "body", key: "idempotency_key" },
+            { in: "body", key: "payload" },
+          ],
+        },
+      ],
+    )
+    return (options?.client ?? this.client).post<
+      V2AiLooperEventIngestResponses,
+      V2AiLooperEventIngestErrors,
+      ThrowOnError
+    >({
+      url: "/api/ai-looper/events",
+      ...options,
+      ...params,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+        ...params.headers,
+      },
+    })
+  }
+}
+
+export class AiLooper extends HeyApiClient {
+  private _task?: Task
+  get task(): Task {
+    return (this._task ??= new Task({ client: this.client }))
+  }
+
+  private _taskRun?: TaskRun
+  get taskRun(): TaskRun {
+    return (this._taskRun ??= new TaskRun({ client: this.client }))
+  }
+
+  private _run?: Run
+  get run(): Run {
+    return (this._run ??= new Run({ client: this.client }))
+  }
+
+  private _plan?: Plan
+  get plan(): Plan {
+    return (this._plan ??= new Plan({ client: this.client }))
+  }
+
+  private _event?: Event3
+  get event(): Event3 {
+    return (this._event ??= new Event3({ client: this.client }))
+  }
+}
+
 export class V2 extends HeyApiClient {
   private _health?: Health
   get health(): Health {
@@ -7071,6 +7475,11 @@ export class V2 extends HeyApiClient {
   private _projectCopy?: ProjectCopy2
   get projectCopy(): ProjectCopy2 {
     return (this._projectCopy ??= new ProjectCopy2({ client: this.client }))
+  }
+
+  private _aiLooper?: AiLooper
+  get aiLooper(): AiLooper {
+    return (this._aiLooper ??= new AiLooper({ client: this.client }))
   }
 }
 

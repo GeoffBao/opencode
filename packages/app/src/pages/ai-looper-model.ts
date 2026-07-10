@@ -1,5 +1,5 @@
 export type ExecutionTrack = "spec_driven" | "standard_task" | "bugfix"
-export type WorkItemType = "feature" | "task" | "bug"
+export type WorkItemType = "feature" | "task" | "bug" | "unknown"
 
 export type AILooperTask = {
   readonly taskCapsuleID: string
@@ -42,4 +42,27 @@ export const aiLooperTaskDetail: AILooperTaskDetail = {
   source: { title: "大型功能：端到端研发自动化", description: "将需求分析、规划、实现、测试与交付串成可恢复的企业研发流程。", acceptanceCriteria: ["TaskRun 跨 Agent Session 持续存在", "计划审批后才能开始实现", "交付摘要与工时可审计"] },
   artifacts: ["需求理解 v1", "执行计划 v1"],
   evidence: ["计划审核等待中", "暂无实现验证证据"],
+}
+
+export function mapTaskListResponse(input: {
+  readonly tasks: ReadonlyArray<{
+    readonly task_capsule_id: string
+    readonly source_task_id: string
+    readonly title: string
+    readonly source_status?: string
+    readonly work_item_type: WorkItemType
+    readonly execution_track?: ExecutionTrack
+    readonly active_task_run_id?: string
+  }>
+}): ReadonlyArray<AILooperTask> {
+  return input.tasks.map((task) => ({
+    taskCapsuleID: task.task_capsule_id,
+    sourceTaskID: task.source_task_id,
+    title: task.title,
+    sourceStatus: task.source_status ?? "未知",
+    workItemType: task.work_item_type,
+    executionTrack: task.execution_track ?? "standard_task",
+    phase: task.active_task_run_id ? "执行中" : "待启动",
+    disposition: task.active_task_run_id ? "running" : "waiting",
+  }))
 }

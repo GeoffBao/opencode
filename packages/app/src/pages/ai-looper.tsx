@@ -1,8 +1,18 @@
 import { A, useParams } from "@solidjs/router"
-import { For, Show } from "solid-js"
-import { aiLooperTaskDetail, aiLooperTasks, type AILooperTask, type ExecutionTrack } from "./ai-looper-model"
+import { createResource, For, Show } from "solid-js"
+import { useServerSDK } from "@/context/server-sdk"
+import { aiLooperTaskDetail, aiLooperTasks, mapTaskListResponse, type AILooperTask, type ExecutionTrack } from "./ai-looper-model"
 
 export function AILooperPage() {
+  const serverSdk = useServerSDK()
+  const [taskResponse] = createResource(() => serverSdk().client.v2.aiLooper.task.list().then((response) => response.data))
+  const tasks = () => {
+    const response = taskResponse()
+    if (!response || response.tasks.length === 0) return aiLooperTasks
+    return mapTaskListResponse(response)
+  }
+  const isDemo = () => !taskResponse() || taskResponse()?.tasks.length === 0
+
   return (
     <main class="mx-auto flex h-full w-full max-w-[1120px] flex-col gap-8 overflow-auto p-6 lg:p-10" data-component="ai-looper-page">
       <header class="flex flex-wrap items-end justify-between gap-4">
@@ -15,8 +25,13 @@ export function AILooperPage() {
           返回 OpenCode 首页
         </A>
       </header>
+      <Show when={isDemo()}>
+        <div class="rounded-md border border-border-weak-base bg-surface-raised-base px-4 py-3 text-13-regular text-text-weak" role="status">
+          {taskResponse.error ? "暂时无法读取 AI Looper 服务，当前显示演示任务。" : "当前服务器暂无 Teambition 任务，当前显示演示任务。"}
+        </div>
+      </Show>
       <section aria-label="AI Looper assigned tasks" class="grid gap-3 lg:grid-cols-3">
-        <For each={aiLooperTasks}>{(task) => <TaskCard task={task} />}</For>
+        <For each={tasks()}>{(task) => <TaskCard task={task} />}</For>
       </section>
       <section class="rounded-lg border border-border-weak-base bg-surface-base p-5" aria-label="AI Looper workflow overview">
         <div class="flex flex-wrap items-center justify-between gap-3">

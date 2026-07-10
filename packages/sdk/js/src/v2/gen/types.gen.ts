@@ -2952,6 +2952,18 @@ export type ProjectCopyError = {
   }
 }
 
+export type AiLooperTaskNotFoundError = {
+  _tag: "AiLooperTaskNotFoundError"
+  taskCapsuleID: string
+  message: string
+}
+
+export type AiLooperTaskRunNotFoundError = {
+  _tag: "AiLooperTaskRunNotFoundError"
+  taskRunID: string
+  message: string
+}
+
 export type EffectHttpApiErrorForbidden = {
   _tag: "Forbidden"
 }
@@ -13579,6 +13591,758 @@ export type V2ProjectCopyRefreshResponses = {
 }
 
 export type V2ProjectCopyRefreshResponse = V2ProjectCopyRefreshResponses[keyof V2ProjectCopyRefreshResponses]
+
+export type V2AiLooperTaskListData = {
+  body?: never
+  path?: never
+  query?: never
+  url: "/api/ai-looper/tasks"
+}
+
+export type V2AiLooperTaskListErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+}
+
+export type V2AiLooperTaskListError = V2AiLooperTaskListErrors[keyof V2AiLooperTaskListErrors]
+
+export type V2AiLooperTaskListResponses = {
+  /**
+   * Success
+   */
+  200: {
+    tasks: Array<{
+      task_capsule_id: string
+      source_task_id: string
+      title: string
+      source_status?: string
+      work_item_type: "feature" | "task" | "bug" | "unknown"
+      execution_track?: "spec_driven" | "standard_task" | "bugfix"
+      active_task_run_id?: string
+    }>
+  }
+}
+
+export type V2AiLooperTaskListResponse = V2AiLooperTaskListResponses[keyof V2AiLooperTaskListResponses]
+
+export type V2AiLooperTaskGetData = {
+  body?: never
+  path: {
+    taskCapsuleID: string
+  }
+  query?: never
+  url: "/api/ai-looper/tasks/{taskCapsuleID}"
+}
+
+export type V2AiLooperTaskGetErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * AiLooperTaskNotFoundError
+   */
+  404: AiLooperTaskNotFoundError
+}
+
+export type V2AiLooperTaskGetError = V2AiLooperTaskGetErrors[keyof V2AiLooperTaskGetErrors]
+
+export type V2AiLooperTaskGetResponses = {
+  /**
+   * Success
+   */
+  200: {
+    task_capsule: {
+      task_capsule_id: string
+      source_task_id: string
+      title: string
+      source_status?: string
+      work_item_type: "feature" | "task" | "bug" | "unknown"
+      execution_track?: "spec_driven" | "standard_task" | "bugfix"
+      active_task_run_id?: string
+    }
+    source_task: {
+      source_task_id: string
+      source_system: "teambition"
+      title: string
+      description?: string
+      source_status?: string
+      priority?: string
+      deadline?: string
+      work_item_type: "feature" | "task" | "bug" | "unknown"
+      assignee_ids: Array<string>
+      project_id?: string
+      project_config_ref?: string
+      attachment_refs: Array<string>
+      acceptance_criteria: Array<{
+        acceptance_criterion_id: string
+        text: string
+        source_ref: string
+      }>
+      source_version: string
+      retrieved_at: string
+      visibility_state: "visible" | "missing" | "inaccessible" | "deleted" | "archived" | "reassigned"
+    }
+    current_task_run?: {
+      task_run_id: string
+      task_capsule_id: string
+      execution_track: "spec_driven" | "standard_task" | "bugfix"
+      gate_state:
+        | "not_required"
+        | "awaiting_confirmation"
+        | "confirmed"
+        | "awaiting_formal_approval"
+        | "formally_approved"
+        | "rejected"
+        | "escalated"
+      phase:
+        | "received"
+        | "analyzing"
+        | "planning"
+        | "plan_review"
+        | "implementing"
+        | "verifying"
+        | "reporting"
+        | "time_confirmation"
+        | "completed"
+        | "cancelled"
+      disposition: "running" | "waiting" | "blocked" | "escalated"
+      lifecycle: "active" | "completed" | "cancelled" | "archived"
+      latest_committed_step: string
+      next_expected_action?: string
+      responsible_role?: string
+      retry_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      retry_budget: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      last_attempt_at?: string
+      next_wake_at?: string
+      blocked_reason?: string
+      blocked_owner?: string
+      blocked_since?: string
+      escalation_reason?: string
+      escalated_at?: string
+      created_at: string
+      updated_at: string
+      completed_at?: string
+      cancelled_at?: string
+    }
+  }
+}
+
+export type V2AiLooperTaskGetResponse = V2AiLooperTaskGetResponses[keyof V2AiLooperTaskGetResponses]
+
+export type V2AiLooperTaskRunCreateData = {
+  body: {
+    workspace_ref: string
+    idempotency_key?: string
+  }
+  path: {
+    taskCapsuleID: string
+  }
+  query?: never
+  url: "/api/ai-looper/tasks/{taskCapsuleID}/runs"
+}
+
+export type V2AiLooperTaskRunCreateErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * AiLooperTaskNotFoundError
+   */
+  404: AiLooperTaskNotFoundError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperTaskRunCreateError = V2AiLooperTaskRunCreateErrors[keyof V2AiLooperTaskRunCreateErrors]
+
+export type V2AiLooperTaskRunCreateResponses = {
+  /**
+   * Success
+   */
+  200: {
+    task_run_id: string
+    task_capsule_id: string
+    execution_track: "spec_driven" | "standard_task" | "bugfix"
+    gate_state:
+      | "not_required"
+      | "awaiting_confirmation"
+      | "confirmed"
+      | "awaiting_formal_approval"
+      | "formally_approved"
+      | "rejected"
+      | "escalated"
+    phase:
+      | "received"
+      | "analyzing"
+      | "planning"
+      | "plan_review"
+      | "implementing"
+      | "verifying"
+      | "reporting"
+      | "time_confirmation"
+      | "completed"
+      | "cancelled"
+    disposition: "running" | "waiting" | "blocked" | "escalated"
+    lifecycle: "active" | "completed" | "cancelled" | "archived"
+    latest_committed_step: string
+    next_expected_action?: string
+    responsible_role?: string
+    retry_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    retry_budget: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    last_attempt_at?: string
+    next_wake_at?: string
+    blocked_reason?: string
+    blocked_owner?: string
+    blocked_since?: string
+    escalation_reason?: string
+    escalated_at?: string
+    created_at: string
+    updated_at: string
+    completed_at?: string
+    cancelled_at?: string
+  }
+}
+
+export type V2AiLooperTaskRunCreateResponse = V2AiLooperTaskRunCreateResponses[keyof V2AiLooperTaskRunCreateResponses]
+
+export type V2AiLooperRunGetData = {
+  body?: never
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}"
+}
+
+export type V2AiLooperRunGetErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * AiLooperTaskRunNotFoundError
+   */
+  404: AiLooperTaskRunNotFoundError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperRunGetError = V2AiLooperRunGetErrors[keyof V2AiLooperRunGetErrors]
+
+export type V2AiLooperRunGetResponses = {
+  /**
+   * Success
+   */
+  200: {
+    task_run: {
+      task_run_id: string
+      task_capsule_id: string
+      execution_track: "spec_driven" | "standard_task" | "bugfix"
+      gate_state:
+        | "not_required"
+        | "awaiting_confirmation"
+        | "confirmed"
+        | "awaiting_formal_approval"
+        | "formally_approved"
+        | "rejected"
+        | "escalated"
+      phase:
+        | "received"
+        | "analyzing"
+        | "planning"
+        | "plan_review"
+        | "implementing"
+        | "verifying"
+        | "reporting"
+        | "time_confirmation"
+        | "completed"
+        | "cancelled"
+      disposition: "running" | "waiting" | "blocked" | "escalated"
+      lifecycle: "active" | "completed" | "cancelled" | "archived"
+      latest_committed_step: string
+      next_expected_action?: string
+      responsible_role?: string
+      retry_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      retry_budget: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      last_attempt_at?: string
+      next_wake_at?: string
+      blocked_reason?: string
+      blocked_owner?: string
+      blocked_since?: string
+      escalation_reason?: string
+      escalated_at?: string
+      created_at: string
+      updated_at: string
+      completed_at?: string
+      cancelled_at?: string
+    }
+    artifacts: Array<{
+      artifact_id: string
+      task_run_id: string
+      artifact_type:
+        | "source_snapshot"
+        | "requirement_interpretation"
+        | "execution_plan"
+        | "lightweight_task_brief"
+        | "code_change"
+        | "test_result"
+        | "delivery_summary"
+        | "bug_reproduction"
+        | "worktime_draft"
+        | "knowledge_asset_candidate"
+        | "attachment"
+      version: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+      content_ref?: string
+      provenance: string
+      created_at: string
+    }>
+    evidence: Array<{
+      evidence_id: string
+      task_run_id: string
+      acceptance_criterion_id?: string
+      evidence_type:
+        | "automated_test"
+        | "static_check"
+        | "runtime_observation"
+        | "bug_reproduction"
+        | "human_acceptance"
+        | "external_ack"
+        | "manual_note"
+      result: "pass" | "fail" | "inconclusive"
+      artifact_refs: Array<string>
+      actor_id?: string
+      runtime_adapter?: string
+      explanation?: string
+      observed_at: string
+      audit_record_id?: string
+    }>
+    attempts: Array<{
+      execution_attempt_id: string
+      task_run_id: string
+      attempt_type: "analysis" | "planning" | "implementation" | "validation" | "reporting" | "recovery"
+      outcome: "succeeded" | "failed" | "blocked" | "cancelled"
+      started_at: string
+      ended_at?: string
+      progress_summary?: string
+    }>
+    audit_records: Array<{
+      audit_record_id: string
+      task_run_id: string
+      actor_or_source: string
+      action_type: string
+      reason_or_evidence?: string
+      before_state_ref?: string
+      after_state_ref?: string
+      related_artifact_refs: Array<string>
+      created_at: string
+    }>
+  }
+}
+
+export type V2AiLooperRunGetResponse = V2AiLooperRunGetResponses[keyof V2AiLooperRunGetResponses]
+
+export type V2AiLooperRunCancelData = {
+  body: {
+    reason: string
+  }
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}/cancel"
+}
+
+export type V2AiLooperRunCancelErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * ForbiddenError
+   */
+  403: ForbiddenError
+  /**
+   * AiLooperTaskRunNotFoundError
+   */
+  404: AiLooperTaskRunNotFoundError
+  /**
+   * ConflictError
+   */
+  409: ConflictError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperRunCancelError = V2AiLooperRunCancelErrors[keyof V2AiLooperRunCancelErrors]
+
+export type V2AiLooperRunCancelResponses = {
+  /**
+   * Success
+   */
+  200: {
+    task_run_id: string
+    task_capsule_id: string
+    execution_track: "spec_driven" | "standard_task" | "bugfix"
+    gate_state:
+      | "not_required"
+      | "awaiting_confirmation"
+      | "confirmed"
+      | "awaiting_formal_approval"
+      | "formally_approved"
+      | "rejected"
+      | "escalated"
+    phase:
+      | "received"
+      | "analyzing"
+      | "planning"
+      | "plan_review"
+      | "implementing"
+      | "verifying"
+      | "reporting"
+      | "time_confirmation"
+      | "completed"
+      | "cancelled"
+    disposition: "running" | "waiting" | "blocked" | "escalated"
+    lifecycle: "active" | "completed" | "cancelled" | "archived"
+    latest_committed_step: string
+    next_expected_action?: string
+    responsible_role?: string
+    retry_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    retry_budget: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    last_attempt_at?: string
+    next_wake_at?: string
+    blocked_reason?: string
+    blocked_owner?: string
+    blocked_since?: string
+    escalation_reason?: string
+    escalated_at?: string
+    created_at: string
+    updated_at: string
+    completed_at?: string
+    cancelled_at?: string
+  }
+}
+
+export type V2AiLooperRunCancelResponse = V2AiLooperRunCancelResponses[keyof V2AiLooperRunCancelResponses]
+
+export type V2AiLooperRunHumanEvidenceData = {
+  body: {
+    acceptance_criterion_id: string
+    result: "pass" | "fail" | "inconclusive"
+    explanation: string
+  }
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}/human-evidence"
+}
+
+export type V2AiLooperRunHumanEvidenceErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * ForbiddenError
+   */
+  403: ForbiddenError
+  /**
+   * AiLooperTaskRunNotFoundError
+   */
+  404: AiLooperTaskRunNotFoundError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperRunHumanEvidenceError = V2AiLooperRunHumanEvidenceErrors[keyof V2AiLooperRunHumanEvidenceErrors]
+
+export type V2AiLooperRunHumanEvidenceResponses = {
+  /**
+   * Success
+   */
+  200: {
+    evidence_id: string
+    task_run_id: string
+    acceptance_criterion_id?: string
+    evidence_type:
+      | "automated_test"
+      | "static_check"
+      | "runtime_observation"
+      | "bug_reproduction"
+      | "human_acceptance"
+      | "external_ack"
+      | "manual_note"
+    result: "pass" | "fail" | "inconclusive"
+    artifact_refs: Array<string>
+    actor_id?: string
+    runtime_adapter?: string
+    explanation?: string
+    observed_at: string
+    audit_record_id?: string
+  }
+}
+
+export type V2AiLooperRunHumanEvidenceResponse =
+  V2AiLooperRunHumanEvidenceResponses[keyof V2AiLooperRunHumanEvidenceResponses]
+
+export type V2AiLooperRunDeliverySummaryData = {
+  body: {
+    delivery_summary_artifact_id: string
+    delivery_summary_version: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+  }
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}/delivery-summary"
+}
+
+export type V2AiLooperRunDeliverySummaryErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * AiLooperTaskRunNotFoundError
+   */
+  404: AiLooperTaskRunNotFoundError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperRunDeliverySummaryError =
+  V2AiLooperRunDeliverySummaryErrors[keyof V2AiLooperRunDeliverySummaryErrors]
+
+export type V2AiLooperRunDeliverySummaryResponses = {
+  /**
+   * Success
+   */
+  202: {
+    external_write_id: string
+    task_run_id: string
+    target_system: "teambition"
+    write_type: "progress_note" | "delivery_summary" | "worktime"
+    idempotency_key: string
+    payload_ref: string
+    status: "pending" | "sent" | "acknowledged" | "retrying" | "failed" | "cancelled"
+    attempt_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    next_retry_at?: string
+    last_error?: string
+    created_at: string
+    updated_at: string
+    acknowledged_at?: string
+  }
+}
+
+export type V2AiLooperRunDeliverySummaryResponse =
+  V2AiLooperRunDeliverySummaryResponses[keyof V2AiLooperRunDeliverySummaryResponses]
+
+export type V2AiLooperRunWorktimeData = {
+  body: {
+    worktime_draft_id: string
+    confirmed_minutes: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    confirmed_description: string
+  }
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}/worktime"
+}
+
+export type V2AiLooperRunWorktimeErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * ForbiddenError
+   */
+  403: ForbiddenError
+  /**
+   * AiLooperTaskRunNotFoundError
+   */
+  404: AiLooperTaskRunNotFoundError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperRunWorktimeError = V2AiLooperRunWorktimeErrors[keyof V2AiLooperRunWorktimeErrors]
+
+export type V2AiLooperRunWorktimeResponses = {
+  /**
+   * Success
+   */
+  202: {
+    external_write_id: string
+    task_run_id: string
+    target_system: "teambition"
+    write_type: "progress_note" | "delivery_summary" | "worktime"
+    idempotency_key: string
+    payload_ref: string
+    status: "pending" | "sent" | "acknowledged" | "retrying" | "failed" | "cancelled"
+    attempt_count: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    next_retry_at?: string
+    last_error?: string
+    created_at: string
+    updated_at: string
+    acknowledged_at?: string
+  }
+}
+
+export type V2AiLooperRunWorktimeResponse = V2AiLooperRunWorktimeResponses[keyof V2AiLooperRunWorktimeResponses]
+
+export type V2AiLooperPlanDecideData = {
+  body: {
+    plan_id: string
+    plan_version: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    decision: "approved" | "rejected"
+    comments?: string
+  }
+  path: {
+    taskRunID: string
+  }
+  query?: never
+  url: "/api/ai-looper/runs/{taskRunID}/plan/decision"
+}
+
+export type V2AiLooperPlanDecideErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * ForbiddenError
+   */
+  403: ForbiddenError
+  /**
+   * ConflictError
+   */
+  409: ConflictError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperPlanDecideError = V2AiLooperPlanDecideErrors[keyof V2AiLooperPlanDecideErrors]
+
+export type V2AiLooperPlanDecideResponses = {
+  /**
+   * Success
+   */
+  200: {
+    approval_decision_id: string
+    task_run_id: string
+    artifact_type: string
+    artifact_id: string
+    artifact_version: number | "NaN" | "Infinity" | "-Infinity" | "Infinity" | "-Infinity" | "NaN"
+    decision: "approved" | "rejected"
+    actor_id: string
+    authority_source: string
+    comments?: string
+    decided_at: string
+  }
+}
+
+export type V2AiLooperPlanDecideResponse = V2AiLooperPlanDecideResponses[keyof V2AiLooperPlanDecideResponses]
+
+export type V2AiLooperEventIngestData = {
+  body: {
+    source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    source_event_id?: string
+    event_type: string
+    idempotency_key?: string
+    payload: {
+      [key: string]: unknown
+    }
+  }
+  path?: never
+  query?: never
+  url: "/api/ai-looper/events"
+}
+
+export type V2AiLooperEventIngestErrors = {
+  /**
+   * InvalidRequestError
+   */
+  400: InvalidRequestError
+  /**
+   * UnauthorizedError
+   */
+  401: UnauthorizedError
+  /**
+   * ServiceUnavailableError
+   */
+  503: ServiceUnavailableError
+}
+
+export type V2AiLooperEventIngestError = V2AiLooperEventIngestErrors[keyof V2AiLooperEventIngestErrors]
+
+export type V2AiLooperEventIngestResponses = {
+  /**
+   * Success
+   */
+  200: {
+    external_event_id: string
+    processed_state: "pending" | "processed" | "ignored_duplicate"
+  }
+}
+
+export type V2AiLooperEventIngestResponse = V2AiLooperEventIngestResponses[keyof V2AiLooperEventIngestResponses]
 
 export type PtyConnectData = {
   body?: never
