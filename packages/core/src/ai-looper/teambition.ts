@@ -18,7 +18,7 @@ export namespace AILooperTeambition {
 
   export async function listAuthorizedAssignedWorkItems(adapter: Adapter, engineerID: string) {
     return (await adapter.listAssignedWorkItems(engineerID))
-      .map(decodeSourceTask)
+      .map((sourceTask) => decodeSourceTask(sourceTask))
       .filter((sourceTask) => canImportForEngineer(sourceTask, engineerID))
   }
 

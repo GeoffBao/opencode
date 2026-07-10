@@ -92,7 +92,34 @@ export type AILooperAuditRecord = {
 }
 
 export function taskRunSections(task: AILooperTaskDetail) {
+  const accessibility = {
+    source: "Original source requirement",
+    interpretation: "AI interpretation",
+    gates: "Execution gates",
+    status: "TaskRun status",
+    attempts: "Execution attempts",
+    artifacts: "Artifacts",
+    evidence: "Evidence",
+    completion: "Delivery and worktime confirmation",
+    externalWrites: "External writes",
+    audit: "Audit timeline",
+  }
   return {
+    accessibility: {
+      ...accessibility,
+      labels: [
+        accessibility.source,
+        accessibility.interpretation,
+        accessibility.gates,
+        accessibility.status,
+        accessibility.attempts,
+        accessibility.artifacts,
+        accessibility.evidence,
+        accessibility.completion,
+        accessibility.externalWrites,
+        accessibility.audit,
+      ],
+    },
     source: {
       title: "原始需求",
       sourceTaskID: task.sourceTaskID,

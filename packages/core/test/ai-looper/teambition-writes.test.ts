@@ -57,6 +57,7 @@ describe("AILooper Teambition writes", () => {
       existingWrites: [],
       worktimeDraft: draft(),
     })
+    if (worktime.status !== "queued") throw new Error("Responsible engineer worktime submission must be queued")
     const worktimeRetry = AILooperOutbox.queueWorktimeSubmission({
       externalWriteID: "write_worktime_2",
       taskRunID: "run_1",

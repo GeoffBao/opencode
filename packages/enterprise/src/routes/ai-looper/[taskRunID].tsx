@@ -91,7 +91,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
   return (
     <main>
       <h1>{props.task.title}</h1>
-      <section aria-label="Original source requirement">
+      <section aria-label={sections.accessibility.source}>
         <h2>{sections.source.title}</h2>
         <dl>
           <dt>Source system</dt>
@@ -109,7 +109,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
         <h3>Acceptance criteria</h3>
         <ul>{sections.source.acceptanceCriteria.map((criterion) => <li>{criterion}</li>)}</ul>
       </section>
-      <section aria-label="AI interpretation">
+      <section aria-label={sections.accessibility.interpretation}>
         <h2>{sections.interpretation.title}</h2>
         <p>{sections.interpretation.goal}</p>
         <dl>
@@ -119,7 +119,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
         <h3>Risks</h3>
         <ul>{sections.interpretation.risks.map((risk) => <li>{risk}</li>)}</ul>
       </section>
-      <section aria-label="Execution gates">
+      <section aria-label={sections.accessibility.gates}>
         <h2>{sections.gates.title}</h2>
         <dl>
           <dt>Plan review</dt>
@@ -130,7 +130,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           <dd>{sections.gates.bugfixGateStatus}</dd>
         </dl>
       </section>
-      <section aria-label="TaskRun status">
+      <section aria-label={sections.accessibility.status}>
         <h2>{sections.status.title}</h2>
         <dl>
           <dt>TaskRun</dt>
@@ -163,7 +163,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           ) : null}
         </dl>
       </section>
-      <section aria-label="Execution attempts">
+      <section aria-label={sections.accessibility.attempts}>
         <h2>{sections.attempts.title}</h2>
         <ul>
           {sections.attempts.items.map((attempt) => (
@@ -173,7 +173,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           ))}
         </ul>
       </section>
-      <section aria-label="Artifacts">
+      <section aria-label={sections.accessibility.artifacts}>
         <h2>{sections.artifacts.title}</h2>
         <ul>
           {sections.artifacts.items.map((artifact) => (
@@ -183,7 +183,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           ))}
         </ul>
       </section>
-      <section aria-label="Evidence">
+      <section aria-label={sections.accessibility.evidence}>
         <h2>{sections.evidence.title}</h2>
         <ul>
           {sections.evidence.items.map((evidence) => (
@@ -193,7 +193,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           ))}
         </ul>
       </section>
-      <section aria-label="Delivery and worktime confirmation">
+      <section aria-label={sections.accessibility.completion}>
         <h2>{sections.completion.title}</h2>
         <dl>
           <dt>Human acceptance evidence</dt>
@@ -210,7 +210,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           <dd>{sections.completion.worktimeStatus}</dd>
         </dl>
       </section>
-      <section aria-label="External writes">
+      <section aria-label={sections.accessibility.externalWrites}>
         <h2>{sections.externalWrites.title}</h2>
         <ul>
           {sections.externalWrites.items.map((write) => (
@@ -220,7 +220,7 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
           ))}
         </ul>
       </section>
-      <section aria-label="Audit timeline">
+      <section aria-label={sections.accessibility.audit}>
         <h2>{sections.audit.title}</h2>
         <ol>
           {sections.audit.items.map((record) => (

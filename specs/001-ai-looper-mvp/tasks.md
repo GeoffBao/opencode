@@ -211,19 +211,19 @@
 
 - [X] T101 [P] Add KnowledgeAssetCandidate capture tests in `packages/core/test/ai-looper/knowledge-asset-candidate.test.ts`
 - [X] T102 Implement non-authoritative reusable Spec/Knowledge/Skill candidate capture in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T103 [P] Add enterprise UI accessibility smoke test for AI Looper routes in `packages/enterprise/test/ai-looper-accessibility.test.tsx`
+- [X] T103 [P] Add enterprise UI accessibility smoke test for AI Looper routes in `packages/enterprise/test/ai-looper-accessibility.test.tsx`
 - [X] T104 [P] Add observability smoke test for TaskRun state, attempts, external writes, and audit diagnostics in `packages/core/test/ai-looper/observability.test.ts`
-- [ ] T105 [P] Add task-list and task-detail latency smoke test for the 30-second pilot target in `packages/enterprise/test/ai-looper-latency.test.tsx`
-- [ ] T106 [P] Add execution-view key-state visibility smoke test for the 10-second recognition target in `packages/enterprise/test/ai-looper-state-recognition.test.tsx`
+- [X] T105 [P] Add task-list and task-detail latency smoke test for the 30-second pilot target in `packages/enterprise/test/ai-looper-latency.test.tsx`
+- [X] T106 [P] Add execution-view key-state visibility smoke test for the 10-second recognition target in `packages/enterprise/test/ai-looper-state-recognition.test.tsx`
 - [X] T107 [P] Add fake RuntimeAdapter fixture test for changedArtifacts, commandsRun, and evidenceCandidates recording in `packages/core/test/ai-looper/runtime-adapter-fixture.test.ts`
 - [X] T108 [P] Add negative test that KnowledgeAssetCandidate is not automatically published as PublishedTeamAsset in `packages/core/test/ai-looper/knowledge-asset-publication.test.ts`
-- [ ] T109 Run generated client update from `packages/client` if public Protocol or Server HttpApi changed
-- [ ] T110 Run `bun test` from `packages/core`
-- [ ] T111 Run `bun typecheck` from `packages/schema`
-- [ ] T112 Run `bun typecheck` from `packages/protocol`
-- [ ] T113 Run `bun typecheck` from `packages/core`
-- [ ] T114 Run `bun typecheck` from `packages/server`
-- [ ] T115 Run `bun typecheck` from `packages/enterprise`
+- [X] T109 Run generated client update from `packages/client` if public Protocol or Server HttpApi changed
+- [X] T110 Run `bun test` from `packages/core`
+- [X] T111 Run `bun typecheck` from `packages/schema`
+- [X] T112 Run `bun typecheck` from `packages/protocol`
+- [X] T113 Run `bun typecheck` from `packages/core`
+- [X] T114 Run `bun typecheck` from `packages/server`
+- [X] T115 Run `bun typecheck` from `packages/enterprise`
 - [ ] T116 Validate quickstart scenario and record evidence in `specs/001-ai-looper-mvp/quickstart.md`
 
 ---

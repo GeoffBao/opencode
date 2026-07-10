@@ -132,3 +132,22 @@ Before declaring the MVP complete, collect:
   cancellations, and human interventions.
 - A pilot task transcript showing source task, requirement interpretation, plan,
   approval, runtime attempt, evidence, delivery summary, and confirmed worktime.
+
+## 7. Validation evidence (2026-07-10)
+
+Automated verification completed:
+
+- `packages/core`: `bun test` passed 1124 tests, including TaskRun recovery,
+  completion evidence, outbox idempotency, worktime authority, governed asset
+  candidate, and Runtime adapter fixture suites.
+- `packages/schema`, `packages/protocol`, `packages/core`, `packages/server`, and
+  `packages/enterprise`: `bun --bun run typecheck` passed. The `--bun` form is
+  required on this host because plain script execution resolves the TypeScript
+  native preview package as x64 instead of arm64.
+- `packages/server`: all 10 AI Looper API contract tests passed.
+- `packages/enterprise`: AI Looper detail, accessibility, state-recognition, and
+  latency smoke tests passed.
+
+The live pilot remains pending: configure a real Teambition adapter and a
+stateful Workbench implementation for an authorized engineer, then retain the
+resulting end-to-end task transcript before declaring release readiness.
