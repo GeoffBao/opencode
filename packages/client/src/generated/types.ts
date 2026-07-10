@@ -3005,3 +3005,46 @@ export type ServerAiLooperDecideOutput = {
   readonly comments?: string | undefined
   readonly decided_at: string
 }
+
+export type ServerAiLooperIngestInput = {
+  readonly source_system: {
+    readonly source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    readonly source_event_id?: string | undefined
+    readonly event_type: string
+    readonly idempotency_key?: string | undefined
+    readonly payload: { readonly [x: string]: unknown }
+  }["source_system"]
+  readonly source_event_id?: {
+    readonly source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    readonly source_event_id?: string | undefined
+    readonly event_type: string
+    readonly idempotency_key?: string | undefined
+    readonly payload: { readonly [x: string]: unknown }
+  }["source_event_id"]
+  readonly event_type: {
+    readonly source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    readonly source_event_id?: string | undefined
+    readonly event_type: string
+    readonly idempotency_key?: string | undefined
+    readonly payload: { readonly [x: string]: unknown }
+  }["event_type"]
+  readonly idempotency_key?: {
+    readonly source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    readonly source_event_id?: string | undefined
+    readonly event_type: string
+    readonly idempotency_key?: string | undefined
+    readonly payload: { readonly [x: string]: unknown }
+  }["idempotency_key"]
+  readonly payload: {
+    readonly source_system: "teambition" | "ai_looper_ui" | "coding_runtime"
+    readonly source_event_id?: string | undefined
+    readonly event_type: string
+    readonly idempotency_key?: string | undefined
+    readonly payload: { readonly [x: string]: unknown }
+  }["payload"]
+}
+
+export type ServerAiLooperIngestOutput = {
+  readonly external_event_id: string
+  readonly processed_state: "pending" | "processed" | "ignored_duplicate"
+}

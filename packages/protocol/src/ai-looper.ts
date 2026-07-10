@@ -46,4 +46,19 @@ export namespace AiLooperProtocol {
 
   export const PlanDecisionResponse = AiLooper.ApprovalDecision
   export type PlanDecisionResponse = typeof PlanDecisionResponse.Type
+
+  export const ExternalEventRequest = Schema.Struct({
+    source_system: Schema.Literals(["teambition", "ai_looper_ui", "coding_runtime"]),
+    source_event_id: Schema.String.pipe(Schema.optional),
+    event_type: Schema.String,
+    idempotency_key: Schema.String.pipe(Schema.optional),
+    payload: Schema.Record(Schema.String, Schema.Unknown),
+  })
+  export type ExternalEventRequest = typeof ExternalEventRequest.Type
+
+  export const ExternalEventResponse = Schema.Struct({
+    external_event_id: AiLooper.ID,
+    processed_state: Schema.Literals(["pending", "processed", "ignored_duplicate"]),
+  })
+  export type ExternalEventResponse = typeof ExternalEventResponse.Type
 }

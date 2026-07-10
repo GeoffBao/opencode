@@ -119,6 +119,8 @@ import type {
   ServerAiLooperCreateOutput,
   ServerAiLooperDecideInput,
   ServerAiLooperDecideOutput,
+  ServerAiLooperIngestInput,
+  ServerAiLooperIngestOutput,
 } from "./types"
 import { ClientError } from "./client-error"
 
@@ -1042,6 +1044,24 @@ export function make(options: ClientOptions) {
             },
             successStatus: 200,
             declaredStatuses: [403, 409, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      ingest: (input: ServerAiLooperIngestInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperIngestOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/events`,
+            body: {
+              source_system: input["source_system"],
+              source_event_id: input["source_event_id"],
+              event_type: input["event_type"],
+              idempotency_key: input["idempotency_key"],
+              payload: input["payload"],
+            },
+            successStatus: 200,
+            declaredStatuses: [503, 401, 400],
             empty: false,
           },
           requestOptions,

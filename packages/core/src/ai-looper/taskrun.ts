@@ -62,6 +62,21 @@ export interface VersionedArtifactInput {
   readonly createdBy: string
 }
 
+export interface ExecutionAttempt {
+  readonly execution_attempt_id: AiLooper.ID
+  readonly task_run_id: AiLooper.ID
+  readonly attempt_type: "analysis" | "planning" | "runtime_execution" | "verification" | "recovery" | "external_write"
+  readonly runtime_adapter?: "opencode"
+  readonly input_artifact_refs: ReadonlyArray<string>
+  readonly output_artifact_refs: ReadonlyArray<string>
+  readonly evidence_refs: ReadonlyArray<string>
+  readonly started_at: string
+  readonly ended_at: string
+  readonly outcome: "succeeded" | "failed" | "no_progress" | "interrupted" | "blocked"
+  readonly failure_reason?: string
+  readonly progress_summary: string
+}
+
 export function createSourceTaskSnapshotArtifact(input: SourceTaskSnapshotInput): AiLooper.Artifact {
   return {
     artifact_id: input.artifactID,
@@ -92,6 +107,41 @@ export function createTaskCapsule(input: TaskCapsuleInput): AiLooper.TaskCapsule
 
 export function findActiveTaskRun(taskRuns: ReadonlyArray<AiLooper.TaskRun>) {
   return taskRuns.find((taskRun) => taskRun.lifecycle === "active")
+}
+
+export function appendExecutionAttempt(attempts: ReadonlyArray<ExecutionAttempt>, attempt: ExecutionAttempt) {
+  return [...attempts, attempt]
+}
+
+export function recoverableTaskRuns(taskRuns: ReadonlyArray<AiLooper.TaskRun>, now: string) {
+  return taskRuns.filter((taskRun) => taskRun.lifecycle === "active" && (!taskRun.next_wake_at || taskRun.next_wake_at <= now))
+}
+
+export function recoveryDeadline(serviceReturnedAt: string) {
+  return new Date(new Date(serviceReturnedAt).getTime() + 15 * 60 * 1000).toISOString()
+}
+
+export function applyAttemptOutcome(input: {
+  readonly taskRun: AiLooper.TaskRun
+  readonly attempt: Pick<ExecutionAttempt, "outcome" | "ended_at" | "failure_reason">
+  readonly nextWakeAt: string
+}) {
+  if (input.attempt.outcome === "no_progress") return applyNoProgress(input.taskRun, input.attempt, input.nextWakeAt)
+  if (input.attempt.outcome === "blocked") {
+    return {
+      ...input.taskRun,
+      disposition: "blocked" as const,
+      blocked_reason: input.attempt.failure_reason ?? "Runtime attempt blocked",
+      blocked_since: input.attempt.ended_at,
+      last_attempt_at: input.attempt.ended_at,
+      updated_at: input.attempt.ended_at,
+    }
+  }
+  return {
+    ...input.taskRun,
+    last_attempt_at: input.attempt.ended_at,
+    updated_at: input.attempt.ended_at,
+  }
 }
 
 export function createOrReuseTaskRun(input: TaskRunCreationInput) {
@@ -193,4 +243,31 @@ function versionedArtifact(input: VersionedArtifactInput, artifactType: AiLooper
     provenance: input.createdBy,
     created_at: input.createdAt,
   } satisfies AiLooper.Artifact
+}
+
+function applyNoProgress(
+  taskRun: AiLooper.TaskRun,
+  attempt: Pick<ExecutionAttempt, "ended_at" | "failure_reason">,
+  nextWakeAt: string,
+) {
+  const retryCount = taskRun.retry_count + 1
+  if (retryCount >= taskRun.retry_budget) {
+    return {
+      ...taskRun,
+      retry_count: retryCount,
+      disposition: "escalated" as const,
+      escalation_reason: attempt.failure_reason ?? "No progress retry budget exhausted",
+      escalated_at: attempt.ended_at,
+      last_attempt_at: attempt.ended_at,
+      updated_at: attempt.ended_at,
+    }
+  }
+  return {
+    ...taskRun,
+    retry_count: retryCount,
+    disposition: "waiting" as const,
+    next_wake_at: nextWakeAt,
+    last_attempt_at: attempt.ended_at,
+    updated_at: attempt.ended_at,
+  }
 }

@@ -38,6 +38,13 @@ export namespace AILooperWorkbench {
       readonly decision: "approved" | "rejected"
       readonly comments?: string
     }) => Effect.Effect<AiLooper.ApprovalDecision, UnavailableError>
+    readonly ingestExternalEvent: (input: {
+      readonly sourceSystem: "teambition" | "ai_looper_ui" | "coding_runtime"
+      readonly sourceEventID?: string
+      readonly eventType: string
+      readonly idempotencyKey?: string
+      readonly payload: Record<string, unknown>
+    }) => Effect.Effect<{ readonly external_event_id: AiLooper.ID; readonly processed_state: "pending" | "processed" | "ignored_duplicate" }, UnavailableError>
   }
 
   export class Service extends Context.Service<Service, Interface>()("@opencode/AILooperWorkbench") {}
@@ -56,6 +63,9 @@ export namespace AILooperWorkbench {
       }),
       decidePlan: Effect.fn("AILooperWorkbench.decidePlan")(function* () {
         return yield* new UnavailableError({ message: "AI Looper plan decision is not implemented yet" })
+      }),
+      ingestExternalEvent: Effect.fn("AILooperWorkbench.ingestExternalEvent")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper external event ingestion is not implemented yet" })
       }),
     }),
   )

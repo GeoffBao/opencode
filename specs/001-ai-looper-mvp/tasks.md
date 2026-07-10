@@ -123,22 +123,22 @@
 
 ### Tests for User Story 3
 
-- [ ] T059 [P] [US3] Add RuntimeAdapter contract test for `RuntimeAdapter.run` input/output in `packages/core/test/ai-looper/runtime-adapter.test.ts`
-- [ ] T060 [P] [US3] Add recovery scanner test for Agent Session end before acceptance pass in `packages/core/test/ai-looper/recovery-session-end.test.ts`
-- [ ] T061 [P] [US3] Add process restart recovery test from committed checkpoint in `packages/core/test/ai-looper/recovery-restart.test.ts`
-- [ ] T062 [P] [US3] Add duplicate and out-of-order event fault-injection test in `packages/core/test/ai-looper/external-event-faults.test.ts`
-- [ ] T063 [P] [US3] Add service-return 15-minute recovery target test in `packages/core/test/ai-looper/recovery-sla.test.ts`
+- [X] T059 [P] [US3] Add RuntimeAdapter contract test for `RuntimeAdapter.run` input/output in `packages/core/test/ai-looper/runtime-adapter.test.ts`
+- [X] T060 [P] [US3] Add recovery scanner test for Agent Session end before acceptance pass in `packages/core/test/ai-looper/recovery-session-end.test.ts`
+- [X] T061 [P] [US3] Add process restart recovery test from committed checkpoint in `packages/core/test/ai-looper/recovery-restart.test.ts`
+- [X] T062 [P] [US3] Add duplicate and out-of-order event fault-injection test in `packages/core/test/ai-looper/external-event-faults.test.ts`
+- [X] T063 [P] [US3] Add service-return 15-minute recovery target test in `packages/core/test/ai-looper/recovery-sla.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T064 [US3] Implement opencode RuntimeAdapter invocation boundary in `packages/core/src/ai-looper/runtime.ts`
-- [ ] T065 [US3] Implement ExecutionAttempt append-only recording in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T066 [US3] Implement promptSnapshot and artifactRefs snapshot validation in `packages/core/src/ai-looper/runtime.ts`
-- [ ] T067 [US3] Implement recovery scanner for active TaskRuns and `next_wake_at` in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T068 [US3] Implement ExternalEvent ingestion and duplicate reconciliation in `packages/core/src/ai-looper/outbox.ts`
-- [ ] T069 [US3] Implement `POST /ai-looper/events` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T070 [US3] Implement retry/no-progress escalation policy in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T071 [US3] Record audit entries for recovery, retry, duplicate event, and escalation in `packages/core/src/ai-looper/audit.ts`
+- [X] T064 [US3] Implement opencode RuntimeAdapter invocation boundary in `packages/core/src/ai-looper/runtime.ts`
+- [X] T065 [US3] Implement ExecutionAttempt append-only recording in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T066 [US3] Implement promptSnapshot and artifactRefs snapshot validation in `packages/core/src/ai-looper/runtime.ts`
+- [X] T067 [US3] Implement recovery scanner for active TaskRuns and `next_wake_at` in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T068 [US3] Implement ExternalEvent ingestion and duplicate reconciliation in `packages/core/src/ai-looper/outbox.ts`
+- [X] T069 [US3] Implement `POST /ai-looper/events` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T070 [US3] Implement retry/no-progress escalation policy in `packages/core/src/ai-looper/taskrun.ts`
+- [X] T071 [US3] Record audit entries for recovery, retry, duplicate event, and escalation in `packages/core/src/ai-looper/audit.ts`
 
 **Checkpoint**: US3 independently demoable.
 

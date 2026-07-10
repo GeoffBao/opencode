@@ -121,4 +121,56 @@ export namespace AILooperAudit {
       now: input.now,
     })
   }
+
+  export function recoveryRecorded(input: { readonly taskRunID: string; readonly actorOrSource?: string; readonly now?: string }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorOrSource ?? "recovery_scanner",
+      actionType: "recovery.scanned",
+      now: input.now,
+    })
+  }
+
+  export function retryRecorded(input: {
+    readonly taskRunID: string
+    readonly retryCount: number
+    readonly retryBudget: number
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: "recovery_scanner",
+      actionType: "retry.scheduled",
+      reasonOrEvidence: `retry:${input.retryCount}:budget:${input.retryBudget}`,
+      now: input.now,
+    })
+  }
+
+  export function duplicateEventIgnored(input: {
+    readonly taskRunID: string
+    readonly dedupeKey: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: "external_event_ingest",
+      actionType: "external_event.duplicate_ignored",
+      reasonOrEvidence: input.dedupeKey,
+      now: input.now,
+    })
+  }
+
+  export function escalationRecorded(input: {
+    readonly taskRunID: string
+    readonly reason: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: "recovery_scanner",
+      actionType: "taskrun.escalated",
+      reasonOrEvidence: input.reason,
+      now: input.now,
+    })
+  }
 }

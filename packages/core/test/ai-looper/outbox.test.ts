@@ -11,4 +11,24 @@ describe("AILooper outbox keys", () => {
       "worktime:trn_1:eng_1:2026-07-10T00:00:00.000Z",
     )
   })
+
+  test("reconciles duplicate external events by idempotency key", () => {
+    expect(
+      AILooperOutbox.reconcileExternalEvent({
+        event: {
+          externalEventID: "evt_1",
+          sourceSystem: "teambition",
+          sourceEventID: "tb_evt_1",
+          eventType: "task.updated",
+          idempotencyKey: "teambition:tb_evt_1",
+          payloadRef: "payload://1",
+          receivedAt: "2026-07-10T00:00:00.000Z",
+        },
+        existingDedupeKeys: new Set(["teambition:tb_evt_1"]),
+      }),
+    ).toMatchObject({
+      dedupe_key: "teambition:tb_evt_1",
+      processed_state: "ignored_duplicate",
+    })
+  })
 })

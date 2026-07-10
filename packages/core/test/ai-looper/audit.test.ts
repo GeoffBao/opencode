@@ -85,4 +85,36 @@ describe("AILooper audit", () => {
       }),
     ).toMatchObject({ action_type: "plan.stale_decision_rejected", reason_or_evidence: "requested:1:current:2" })
   })
+
+  test("records recovery, retry, duplicate event, and escalation events", () => {
+    expect(AILooperAudit.recoveryRecorded({ taskRunID: "trn_1", now: "2026-07-10T00:00:00.000Z" })).toMatchObject({
+      action_type: "recovery.scanned",
+      actor_or_source: "recovery_scanner",
+    })
+    expect(
+      AILooperAudit.retryRecorded({
+        taskRunID: "trn_1",
+        retryCount: 2,
+        retryBudget: 3,
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ action_type: "retry.scheduled", reason_or_evidence: "retry:2:budget:3" })
+    expect(
+      AILooperAudit.duplicateEventIgnored({
+        taskRunID: "trn_1",
+        dedupeKey: "coding_runtime:evt_1",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      action_type: "external_event.duplicate_ignored",
+      reason_or_evidence: "coding_runtime:evt_1",
+    })
+    expect(
+      AILooperAudit.escalationRecorded({
+        taskRunID: "trn_1",
+        reason: "No progress retry budget exhausted",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ action_type: "taskrun.escalated" })
+  })
 })

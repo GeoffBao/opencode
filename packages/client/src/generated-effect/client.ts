@@ -720,11 +720,31 @@ const Endpoint18_3 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_3
     },
   }).pipe(Effect.mapError(mapClientError))
 
+type Endpoint18_4Request = Parameters<RawClient["server.aiLooper"]["aiLooper.event.ingest"]>[0]
+type Endpoint18_4Input = {
+  readonly source_system: Endpoint18_4Request["payload"]["source_system"]
+  readonly source_event_id?: Endpoint18_4Request["payload"]["source_event_id"]
+  readonly event_type: Endpoint18_4Request["payload"]["event_type"]
+  readonly idempotency_key?: Endpoint18_4Request["payload"]["idempotency_key"]
+  readonly payload: Endpoint18_4Request["payload"]["payload"]
+}
+const Endpoint18_4 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_4Input) =>
+  raw["aiLooper.event.ingest"]({
+    payload: {
+      source_system: input["source_system"],
+      source_event_id: input["source_event_id"],
+      event_type: input["event_type"],
+      idempotency_key: input["idempotency_key"],
+      payload: input["payload"],
+    },
+  }).pipe(Effect.mapError(mapClientError))
+
 const adaptGroup18 = (raw: RawClient["server.aiLooper"]) => ({
   list: Endpoint18_0(raw),
   get: Endpoint18_1(raw),
   create: Endpoint18_2(raw),
   decide: Endpoint18_3(raw),
+  ingest: Endpoint18_4(raw),
 })
 
 const adaptClient = (raw: RawClient) => ({

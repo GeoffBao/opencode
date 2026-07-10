@@ -48,5 +48,18 @@ export const AILooperHandler = HttpApiBuilder.group(Api, "server.aiLooper", (han
           comments: ctx.payload.comments,
         }).pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
       }),
+    )
+    .handle(
+      "aiLooper.event.ingest",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        return yield* workbench.ingestExternalEvent({
+          sourceSystem: ctx.payload.source_system,
+          sourceEventID: ctx.payload.source_event_id,
+          eventType: ctx.payload.event_type,
+          idempotencyKey: ctx.payload.idempotency_key,
+          payload: ctx.payload.payload,
+        }).pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+      }),
     ),
 )

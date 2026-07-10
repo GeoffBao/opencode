@@ -55,6 +55,19 @@ export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
       }),
     ),
   )
+  .add(
+    HttpApiEndpoint.post("aiLooper.event.ingest", "/api/ai-looper/events", {
+      payload: AiLooperProtocol.ExternalEventRequest,
+      success: AiLooperProtocol.ExternalEventResponse,
+      error: ServiceUnavailableError,
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.event.ingest",
+        summary: "Ingest AI Looper external event",
+        description: "Accept Teambition, UI, or runtime adapter events with duplicate reconciliation.",
+      }),
+    ),
+  )
   .annotateMerge(
     OpenApi.annotations({
       title: "AI Looper",
