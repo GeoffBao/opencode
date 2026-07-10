@@ -25,10 +25,28 @@ export const AILooperHandler = HttpApiBuilder.group(Api, "server.aiLooper", (han
         })
       }),
     )
-    .handle("aiLooper.taskRun.create", () =>
-      Effect.fail(new ServiceUnavailableError({ message: "AI Looper TaskRun creation is not implemented yet" })),
+    .handle(
+      "aiLooper.taskRun.create",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        return yield* workbench.createTaskRun({
+          taskCapsuleID: ctx.params.taskCapsuleID,
+          workspaceRef: ctx.payload.workspace_ref,
+          idempotencyKey: ctx.payload.idempotency_key,
+        }).pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+      }),
     )
-    .handle("aiLooper.plan.decide", () =>
-      Effect.fail(new ServiceUnavailableError({ message: "AI Looper plan decision is not implemented yet" })),
+    .handle(
+      "aiLooper.plan.decide",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        return yield* workbench.decidePlan({
+          taskRunID: ctx.params.taskRunID,
+          planID: ctx.payload.plan_id,
+          planVersion: ctx.payload.plan_version,
+          decision: ctx.payload.decision,
+          comments: ctx.payload.comments,
+        }).pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+      }),
     ),
 )

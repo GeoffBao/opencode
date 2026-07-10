@@ -59,4 +59,66 @@ export namespace AILooperAudit {
       now: input.now,
     })
   }
+
+  export function planDecisionRecorded(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly artifactID: string
+    readonly artifactVersion: number
+    readonly decision: "approved" | "rejected"
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: input.decision === "approved" ? "plan.approved" : "plan.rejected",
+      reasonOrEvidence: `artifact:${input.artifactID}:version:${input.artifactVersion}`,
+      now: input.now,
+    })
+  }
+
+  export function confirmationRecorded(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly confirmationType: "lightweight_brief" | "bugfix_plan"
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: `${input.confirmationType}.confirmed`,
+      now: input.now,
+    })
+  }
+
+  export function unauthorizedAttempt(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly attemptedAction: string
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: "authorization.denied",
+      reasonOrEvidence: input.attemptedAction,
+      now: input.now,
+    })
+  }
+
+  export function staleDecisionRejected(input: {
+    readonly taskRunID: string
+    readonly actorID: string
+    readonly requestedVersion: number
+    readonly currentVersion: number
+    readonly now?: string
+  }) {
+    return create({
+      taskRunID: input.taskRunID,
+      actorOrSource: input.actorID,
+      actionType: "plan.stale_decision_rejected",
+      reasonOrEvidence: `requested:${input.requestedVersion}:current:${input.currentVersion}`,
+      now: input.now,
+    })
+  }
 }

@@ -14,6 +14,9 @@ const sampleTask: AILooperTaskDetail = {
   interpretationGoal: "AI Looper 将 Teambition 任务转成可审批、可恢复、可审计的 TaskRun。",
   interpretationRisks: ["计划审批缺失时不得进入实现", "工时必须由研发人工确认"],
   executionTrack: "spec_driven",
+  planReviewStatus: "awaiting_formal_approval",
+  lightweightBriefStatus: "not_required",
+  bugfixGateStatus: "not_required",
 }
 
 export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }) {
@@ -49,6 +52,17 @@ export function AILooperTaskRunView(props: { readonly task: AILooperTaskDetail }
         </dl>
         <h3>Risks</h3>
         <ul>{sections.interpretation.risks.map((risk) => <li>{risk}</li>)}</ul>
+      </section>
+      <section aria-label="Execution gates">
+        <h2>{sections.gates.title}</h2>
+        <dl>
+          <dt>Plan review</dt>
+          <dd>{sections.gates.planReviewStatus}</dd>
+          <dt>Lightweight brief</dt>
+          <dd>{sections.gates.lightweightBriefStatus}</dd>
+          <dt>Bugfix gate</dt>
+          <dd>{sections.gates.bugfixGateStatus}</dd>
+        </dl>
       </section>
     </main>
   )

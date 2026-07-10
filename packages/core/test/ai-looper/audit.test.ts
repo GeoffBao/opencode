@@ -44,4 +44,45 @@ describe("AILooper audit", () => {
       related_artifact_refs: ["routing_decision:route_1"],
     })
   })
+
+  test("records plan decisions, confirmations, unauthorized attempts, and stale decisions", () => {
+    expect(
+      AILooperAudit.planDecisionRecorded({
+        taskRunID: "trn_1",
+        actorID: "reviewer_1",
+        artifactID: "plan_1",
+        artifactVersion: 2,
+        decision: "approved",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({
+      action_type: "plan.approved",
+      reason_or_evidence: "artifact:plan_1:version:2",
+    })
+    expect(
+      AILooperAudit.confirmationRecorded({
+        taskRunID: "trn_1",
+        actorID: "eng_1",
+        confirmationType: "lightweight_brief",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ action_type: "lightweight_brief.confirmed" })
+    expect(
+      AILooperAudit.unauthorizedAttempt({
+        taskRunID: "trn_1",
+        actorID: "eng_1",
+        attemptedAction: "plan.approve",
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ action_type: "authorization.denied", reason_or_evidence: "plan.approve" })
+    expect(
+      AILooperAudit.staleDecisionRejected({
+        taskRunID: "trn_1",
+        actorID: "reviewer_1",
+        requestedVersion: 1,
+        currentVersion: 2,
+        now: "2026-07-10T00:00:00.000Z",
+      }),
+    ).toMatchObject({ action_type: "plan.stale_decision_rejected", reason_or_evidence: "requested:1:current:2" })
+  })
 })

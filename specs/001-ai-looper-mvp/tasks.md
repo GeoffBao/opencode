@@ -106,10 +106,10 @@
 - [X] T052 [US2] Implement bug reproduction evidence and fix-plan confirmation gate in `packages/core/src/ai-looper/evidence.ts`
 - [X] T053 [US2] Implement reviewer resolution from Teambition task/project config in `packages/core/src/ai-looper/teambition.ts`
 - [X] T054 [US2] Implement approval decision validation for exact plan version and authority in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T055 [US2] Implement `POST /ai-looper/tasks/{taskCapsuleId}/runs` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T056 [US2] Implement `POST /ai-looper/runs/{taskRunId}/plan/decision` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T057 [US2] Render plan review, lightweight brief confirmation, and bugfix gate UI in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
-- [ ] T058 [US2] Record audit entries for approvals, rejections, confirmations, unauthorized attempts, and stale decisions in `packages/core/src/ai-looper/audit.ts`
+- [X] T055 [US2] Implement `POST /ai-looper/tasks/{taskCapsuleId}/runs` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T056 [US2] Implement `POST /ai-looper/runs/{taskRunId}/plan/decision` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T057 [US2] Render plan review, lightweight brief confirmation, and bugfix gate UI in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
+- [X] T058 [US2] Record audit entries for approvals, rejections, confirmations, unauthorized attempts, and stale decisions in `packages/core/src/ai-looper/audit.ts`
 
 **Checkpoint**: US2 independently demoable.
 

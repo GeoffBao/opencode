@@ -17,6 +17,9 @@ describe("AI Looper task view", () => {
       interpretationGoal: "AI 解释：这是 spec-driven 工作流。",
       interpretationRisks: ["审批缺失会阻塞实现"],
       executionTrack: "spec_driven",
+      planReviewStatus: "awaiting_formal_approval",
+      lightweightBriefStatus: "not_required",
+      bugfixGateStatus: "not_required",
     })
 
     expect(sections.source.title).toBe("原始需求")
@@ -25,5 +28,9 @@ describe("AI Looper task view", () => {
     expect(sections.interpretation.goal).toBe("AI 解释：这是 spec-driven 工作流。")
     expect(sections.source).not.toHaveProperty("goal")
     expect(sections.interpretation).not.toHaveProperty("sourceDescription")
+    expect(sections.gates.title).toBe("执行门禁")
+    expect(sections.gates.planReviewStatus).toBe("awaiting_formal_approval")
+    expect(sections.gates.lightweightBriefStatus).toBe("not_required")
+    expect(sections.gates.bugfixGateStatus).toBe("not_required")
   })
 })

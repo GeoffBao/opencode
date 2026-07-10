@@ -10,6 +10,9 @@ export type AILooperTaskDetail = {
   readonly interpretationGoal: string
   readonly interpretationRisks: ReadonlyArray<string>
   readonly executionTrack: "spec_driven" | "standard_task" | "bugfix"
+  readonly planReviewStatus?: string
+  readonly lightweightBriefStatus?: string
+  readonly bugfixGateStatus?: string
 }
 
 export function taskRunSections(task: AILooperTaskDetail) {
@@ -29,6 +32,12 @@ export function taskRunSections(task: AILooperTaskDetail) {
       goal: task.interpretationGoal,
       risks: task.interpretationRisks,
       executionTrack: task.executionTrack,
+    },
+    gates: {
+      title: "执行门禁",
+      planReviewStatus: task.planReviewStatus ?? "waiting_for_plan_review",
+      lightweightBriefStatus: task.lightweightBriefStatus ?? "not_required",
+      bugfixGateStatus: task.bugfixGateStatus ?? "not_required",
     },
   }
 }
