@@ -56,4 +56,23 @@ export namespace AILooperRuntime {
     if (validation !== "valid") return { validation, result: undefined }
     return { validation, result: decodeAttemptResult(await adapter.run(decoded)) }
   }
+
+  export function recordAttemptResult(input: { readonly executionAttemptID: string; readonly result: AttemptResult }) {
+    return {
+      execution_attempt_id: input.executionAttemptID,
+      task_run_id: input.result.taskRunId,
+      attempt_type: "runtime_execution" as const,
+      runtime_adapter: input.result.runtimeAdapter,
+      input_artifact_refs: [],
+      output_artifact_refs: input.result.changedArtifacts,
+      commands_run: input.result.commandsRun,
+      evidence_refs: input.result.evidenceCandidates,
+      diagnostic_refs: input.result.diagnosticRefs,
+      started_at: input.result.startedAt,
+      ended_at: input.result.endedAt,
+      outcome: input.result.outcome,
+      failure_reason: input.result.blocker,
+      progress_summary: input.result.logsSummary,
+    }
+  }
 }

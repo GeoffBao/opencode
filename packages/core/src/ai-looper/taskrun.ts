@@ -70,6 +70,8 @@ export interface ExecutionAttempt {
   readonly input_artifact_refs: ReadonlyArray<string>
   readonly output_artifact_refs: ReadonlyArray<string>
   readonly evidence_refs: ReadonlyArray<string>
+  readonly commands_run?: ReadonlyArray<string>
+  readonly diagnostic_refs?: ReadonlyArray<string>
   readonly started_at: string
   readonly ended_at: string
   readonly outcome: "succeeded" | "failed" | "no_progress" | "interrupted" | "blocked"
@@ -225,6 +227,29 @@ export function createTaskRunDetail(input: TaskRunDetailQueryInput) {
   } satisfies TaskRunDetail
 }
 
+export function createTaskRunDiagnostics(input: {
+  readonly taskRun: AiLooper.TaskRun
+  readonly attempts: ReadonlyArray<Pick<ExecutionAttempt, "task_run_id">>
+  readonly externalWrites: ReadonlyArray<Pick<AiLooper.ExternalWrite, "task_run_id" | "status">>
+  readonly auditRecords: ReadonlyArray<Pick<AiLooper.AuditRecord, "task_run_id" | "action_type">>
+}) {
+  const taskRunAuditRecords = input.auditRecords.filter((record) => record.task_run_id === input.taskRun.task_run_id)
+  return {
+    taskRunID: input.taskRun.task_run_id,
+    phase: input.taskRun.phase,
+    disposition: input.taskRun.disposition,
+    lifecycle: input.taskRun.lifecycle,
+    attemptCount: input.attempts.filter((attempt) => attempt.task_run_id === input.taskRun.task_run_id).length,
+    unresolvedExternalWriteCount: input.externalWrites.filter(
+      (write) =>
+        write.task_run_id === input.taskRun.task_run_id &&
+        (write.status === "pending" || write.status === "sent" || write.status === "retrying"),
+    ).length,
+    auditRecordCount: taskRunAuditRecords.length,
+    latestAuditAction: taskRunAuditRecords.at(-1)?.action_type,
+  }
+}
+
 export function createOrReuseTaskRun(input: TaskRunCreationInput) {
   const existing = findActiveTaskRun(input.existingTaskRuns ?? [])
   if (existing) return { taskRun: existing, reused: true as const }
@@ -280,6 +305,34 @@ export function createWorktimeDraft(input: {
     suggested_description: input.suggestedDescription,
     excluded_agent_runtime_minutes: input.unattendedAgentRuntimeMinutes,
     excluded_idle_wait_minutes: input.idleWaitMinutes,
+  }
+}
+
+export function captureKnowledgeAssetCandidate(input: {
+  readonly candidateID: AiLooper.ID
+  readonly taskRunID: AiLooper.ID
+  readonly assetType: AiLooper.KnowledgeAssetCandidate["asset_type"]
+  readonly title: string
+  readonly contentRef: string
+  readonly provenanceArtifactRefs: ReadonlyArray<AiLooper.ID>
+  readonly suggestedScope: AiLooper.KnowledgeAssetCandidate["suggested_scope"]
+  readonly ownerCandidate?: string
+  readonly evaluationRefs: ReadonlyArray<AiLooper.ID>
+  readonly createdAt: string
+}): AiLooper.KnowledgeAssetCandidate {
+  return {
+    knowledge_asset_candidate_id: input.candidateID,
+    task_run_id: input.taskRunID,
+    asset_type: input.assetType,
+    title: input.title,
+    content_ref: input.contentRef,
+    provenance_artifact_refs: [...input.provenanceArtifactRefs],
+    suggested_scope: input.suggestedScope,
+    owner_candidate: input.ownerCandidate,
+    evaluation_refs: [...input.evaluationRefs],
+    status: "needs_review",
+    created_at: input.createdAt,
+    updated_at: input.createdAt,
   }
 }
 
