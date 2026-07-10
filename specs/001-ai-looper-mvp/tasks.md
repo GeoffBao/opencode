@@ -152,16 +152,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T072 [P] [US4] Add contract test for `GET /ai-looper/runs/{taskRunId}` detail shape in `packages/server/test/contract/ai-looper-run-detail.test.ts`
+- [X] T072 [P] [US4] Add contract test for `GET /ai-looper/runs/{taskRunId}` detail shape in `packages/server/test/contract/ai-looper-run-detail.test.ts`
 - [ ] T073 [P] [US4] Add UI integration test for running/waiting/blocked/escalated TaskRun states in `packages/enterprise/test/ai-looper-run-states.test.tsx`
-- [ ] T074 [P] [US4] Add cancellation contract test for `POST /ai-looper/runs/{taskRunId}/cancel` in `packages/server/test/contract/ai-looper-cancel.test.ts`
+- [X] T074 [P] [US4] Add cancellation contract test for `POST /ai-looper/runs/{taskRunId}/cancel` in `packages/server/test/contract/ai-looper-cancel.test.ts`
 - [ ] T075 [P] [US4] Add cancellation cleanup/unresolved-effects test in `packages/core/test/ai-looper/cancellation.test.ts`
 
 ### Implementation for User Story 4
 
 - [ ] T076 [US4] Implement TaskRun detail query with artifacts, evidence, attempts, waits, blockers, and audit records in `packages/core/src/ai-looper/taskrun.ts`
-- [ ] T077 [US4] Implement `GET /ai-looper/runs/{taskRunId}` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T078 [US4] Implement `POST /ai-looper/runs/{taskRunId}/cancel` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T077 [US4] Implement `GET /ai-looper/runs/{taskRunId}` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T078 [US4] Implement `POST /ai-looper/runs/{taskRunId}/cancel` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T079 [US4] Render phase, disposition, lifecycle, responsible role, next action, blockers, and timestamps in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
 - [ ] T080 [US4] Render attempts, evidence, artifacts, external writes, and audit timeline in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
 - [ ] T081 [US4] Implement authorized cancellation and unresolved-effects reporting in `packages/core/src/ai-looper/taskrun.ts`
