@@ -28,7 +28,7 @@ import { IconButtonV2 } from "@opencode-ai/ui/v2/icon-button-v2"
 import { MenuV2 } from "@opencode-ai/ui/v2/menu-v2"
 import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
 import { getProjectAvatarVariant, useLayout, type HomeProjectSelection, type LocalProject } from "@/context/layout"
-import { useNavigate } from "@solidjs/router"
+import { A, useNavigate } from "@solidjs/router"
 import { base64Encode } from "@opencode-ai/core/util/encode"
 import { Icon } from "@opencode-ai/ui/icon"
 import { usePlatform } from "@/context/platform"
@@ -572,6 +572,18 @@ export function NewHome() {
           class="min-h-0 min-w-0 flex-1 flex flex-col pt-6 lg:pt-12 relative"
           aria-label={language.t("sidebar.project.recentSessions")}
         >
+          <A
+            href="/ai-looper"
+            class="mb-3 flex items-center justify-between rounded-lg border border-border-weak-base bg-surface-base px-4 py-3 hover:bg-surface-raised-base"
+            data-action="home-ai-looper"
+            aria-label="打开 AI Looper 企业研发工作台"
+          >
+            <span>
+              <span class="block text-14-medium text-text-strong">AI Looper</span>
+              <span class="mt-1 block text-12-regular text-text-weak">查看 Teambition 任务与 TaskRun 进度</span>
+            </span>
+            <span class="text-13-medium text-text-weak">打开 →</span>
+          </A>
           <HomeSessionSearch
             value={state.search}
             placeholder={searchPlaceholder()}
