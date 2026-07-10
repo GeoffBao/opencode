@@ -44,6 +44,31 @@ export namespace AiLooperProtocol {
   export const TaskRunResponse = AiLooper.TaskRun
   export type TaskRunResponse = typeof TaskRunResponse.Type
 
+  export const ExecutionAttemptSummary = Schema.Struct({
+    execution_attempt_id: AiLooper.ID,
+    task_run_id: AiLooper.ID,
+    attempt_type: Schema.Literals(["analysis", "planning", "implementation", "validation", "reporting", "recovery"]),
+    outcome: Schema.Literals(["succeeded", "failed", "blocked", "cancelled"]),
+    started_at: Schema.String,
+    ended_at: Schema.String.pipe(Schema.optional),
+    progress_summary: Schema.String.pipe(Schema.optional),
+  })
+  export type ExecutionAttemptSummary = typeof ExecutionAttemptSummary.Type
+
+  export const TaskRunDetailResponse = Schema.Struct({
+    task_run: AiLooper.TaskRun,
+    artifacts: Schema.Array(AiLooper.Artifact),
+    evidence: Schema.Array(AiLooper.Evidence),
+    attempts: Schema.Array(ExecutionAttemptSummary),
+    audit_records: Schema.Array(AiLooper.AuditRecord),
+  })
+  export type TaskRunDetailResponse = typeof TaskRunDetailResponse.Type
+
+  export const CancelTaskRunRequest = Schema.Struct({
+    reason: Schema.String,
+  })
+  export type CancelTaskRunRequest = typeof CancelTaskRunRequest.Type
+
   export const PlanDecisionResponse = AiLooper.ApprovalDecision
   export type PlanDecisionResponse = typeof PlanDecisionResponse.Type
 

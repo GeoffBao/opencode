@@ -109,6 +109,14 @@ export type AiLooperTaskNotFoundError = {
 export const isAiLooperTaskNotFoundError = (value: unknown): value is AiLooperTaskNotFoundError =>
   typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "AiLooperTaskNotFoundError"
 
+export type AiLooperTaskRunNotFoundError = {
+  readonly _tag: "AiLooperTaskRunNotFoundError"
+  readonly taskRunID: string
+  readonly message: string
+}
+export const isAiLooperTaskRunNotFoundError = (value: unknown): value is AiLooperTaskRunNotFoundError =>
+  typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "AiLooperTaskRunNotFoundError"
+
 export type ForbiddenError = { readonly _tag: "ForbiddenError"; readonly message: string }
 export const isForbiddenError = (value: unknown): value is ForbiddenError =>
   typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "ForbiddenError"
@@ -2923,6 +2931,161 @@ export type ServerAiLooperCreateInput = {
 }
 
 export type ServerAiLooperCreateOutput = {
+  readonly task_run_id: string
+  readonly task_capsule_id: string
+  readonly execution_track: "spec_driven" | "standard_task" | "bugfix"
+  readonly gate_state:
+    | "not_required"
+    | "awaiting_confirmation"
+    | "confirmed"
+    | "awaiting_formal_approval"
+    | "formally_approved"
+    | "rejected"
+    | "escalated"
+  readonly phase:
+    | "received"
+    | "analyzing"
+    | "planning"
+    | "plan_review"
+    | "implementing"
+    | "verifying"
+    | "reporting"
+    | "time_confirmation"
+    | "completed"
+    | "cancelled"
+  readonly disposition: "running" | "waiting" | "blocked" | "escalated"
+  readonly lifecycle: "active" | "completed" | "cancelled" | "archived"
+  readonly latest_committed_step: string
+  readonly next_expected_action?: string | undefined
+  readonly responsible_role?: string | undefined
+  readonly retry_count: number
+  readonly retry_budget: number
+  readonly last_attempt_at?: string | undefined
+  readonly next_wake_at?: string | undefined
+  readonly blocked_reason?: string | undefined
+  readonly blocked_owner?: string | undefined
+  readonly blocked_since?: string | undefined
+  readonly escalation_reason?: string | undefined
+  readonly escalated_at?: string | undefined
+  readonly created_at: string
+  readonly updated_at: string
+  readonly completed_at?: string | undefined
+  readonly cancelled_at?: string | undefined
+}
+
+export type ServerAiLooperDetailInput = { readonly taskRunID: { readonly taskRunID: string }["taskRunID"] }
+
+export type ServerAiLooperDetailOutput = {
+  readonly task_run: {
+    readonly task_run_id: string
+    readonly task_capsule_id: string
+    readonly execution_track: "spec_driven" | "standard_task" | "bugfix"
+    readonly gate_state:
+      | "not_required"
+      | "awaiting_confirmation"
+      | "confirmed"
+      | "awaiting_formal_approval"
+      | "formally_approved"
+      | "rejected"
+      | "escalated"
+    readonly phase:
+      | "received"
+      | "analyzing"
+      | "planning"
+      | "plan_review"
+      | "implementing"
+      | "verifying"
+      | "reporting"
+      | "time_confirmation"
+      | "completed"
+      | "cancelled"
+    readonly disposition: "running" | "waiting" | "blocked" | "escalated"
+    readonly lifecycle: "active" | "completed" | "cancelled" | "archived"
+    readonly latest_committed_step: string
+    readonly next_expected_action?: string | undefined
+    readonly responsible_role?: string | undefined
+    readonly retry_count: number
+    readonly retry_budget: number
+    readonly last_attempt_at?: string | undefined
+    readonly next_wake_at?: string | undefined
+    readonly blocked_reason?: string | undefined
+    readonly blocked_owner?: string | undefined
+    readonly blocked_since?: string | undefined
+    readonly escalation_reason?: string | undefined
+    readonly escalated_at?: string | undefined
+    readonly created_at: string
+    readonly updated_at: string
+    readonly completed_at?: string | undefined
+    readonly cancelled_at?: string | undefined
+  }
+  readonly artifacts: ReadonlyArray<{
+    readonly artifact_id: string
+    readonly task_run_id: string
+    readonly artifact_type:
+      | "source_snapshot"
+      | "requirement_interpretation"
+      | "execution_plan"
+      | "lightweight_task_brief"
+      | "code_change"
+      | "test_result"
+      | "delivery_summary"
+      | "bug_reproduction"
+      | "worktime_draft"
+      | "knowledge_asset_candidate"
+      | "attachment"
+    readonly version: number
+    readonly content_ref?: string | undefined
+    readonly provenance: string
+    readonly created_at: string
+  }>
+  readonly evidence: ReadonlyArray<{
+    readonly evidence_id: string
+    readonly task_run_id: string
+    readonly acceptance_criterion_id?: string | undefined
+    readonly evidence_type:
+      | "automated_test"
+      | "static_check"
+      | "runtime_observation"
+      | "bug_reproduction"
+      | "human_acceptance"
+      | "external_ack"
+      | "manual_note"
+    readonly result: "pass" | "fail" | "inconclusive"
+    readonly artifact_refs: ReadonlyArray<string>
+    readonly actor_id?: string | undefined
+    readonly runtime_adapter?: string | undefined
+    readonly explanation?: string | undefined
+    readonly observed_at: string
+    readonly audit_record_id?: string | undefined
+  }>
+  readonly attempts: ReadonlyArray<{
+    readonly execution_attempt_id: string
+    readonly task_run_id: string
+    readonly attempt_type: "analysis" | "planning" | "implementation" | "validation" | "reporting" | "recovery"
+    readonly outcome: "succeeded" | "failed" | "blocked" | "cancelled"
+    readonly started_at: string
+    readonly ended_at?: string | undefined
+    readonly progress_summary?: string | undefined
+  }>
+  readonly audit_records: ReadonlyArray<{
+    readonly audit_record_id: string
+    readonly task_run_id: string
+    readonly actor_or_source: string
+    readonly action_type: string
+    readonly reason_or_evidence?: string | undefined
+    readonly before_state_ref?: string | undefined
+    readonly after_state_ref?: string | undefined
+    readonly related_artifact_refs: ReadonlyArray<string>
+    readonly created_at: string
+  }>
+}
+
+export type ServerAiLooperCancelInput = {
+  readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
+  readonly reason: { readonly reason: string }["reason"]
+}
+
+export type ServerAiLooperCancelOutput = {
   readonly task_run_id: string
   readonly task_capsule_id: string
   readonly execution_track: "spec_driven" | "standard_task" | "bugfix"

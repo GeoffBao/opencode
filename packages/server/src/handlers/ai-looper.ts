@@ -1,5 +1,9 @@
 import { AILooperWorkbench } from "@opencode-ai/core/ai-looper/workbench"
-import { AiLooperTaskNotFoundError, ServiceUnavailableError } from "@opencode-ai/protocol/errors"
+import {
+  AiLooperTaskNotFoundError,
+  AiLooperTaskRunNotFoundError,
+  ServiceUnavailableError,
+} from "@opencode-ai/protocol/errors"
 import { Effect } from "effect"
 import { HttpApiBuilder } from "effect/unstable/httpapi"
 import { Api } from "../api"
@@ -34,6 +38,34 @@ export const AILooperHandler = HttpApiBuilder.group(Api, "server.aiLooper", (han
           workspaceRef: ctx.payload.workspace_ref,
           idempotencyKey: ctx.payload.idempotency_key,
         }).pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+      }),
+    )
+    .handle(
+      "aiLooper.run.detail",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        const detail = yield* workbench
+          .getRunDetail(ctx.params.taskRunID)
+          .pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+        if (detail) return detail
+        return yield* new AiLooperTaskRunNotFoundError({
+          taskRunID: ctx.params.taskRunID,
+          message: `AI Looper TaskRun not found: ${ctx.params.taskRunID}`,
+        })
+      }),
+    )
+    .handle(
+      "aiLooper.run.cancel",
+      Effect.fn(function* (ctx) {
+        const workbench = yield* AILooperWorkbench.Service
+        const taskRun = yield* workbench
+          .cancelTaskRun({ taskRunID: ctx.params.taskRunID, reason: ctx.payload.reason })
+          .pipe(Effect.mapError((error) => new ServiceUnavailableError({ message: error.message })))
+        if (taskRun) return taskRun
+        return yield* new AiLooperTaskRunNotFoundError({
+          taskRunID: ctx.params.taskRunID,
+          message: `AI Looper TaskRun not found: ${ctx.params.taskRunID}`,
+        })
       }),
     )
     .handle(

@@ -19,6 +19,24 @@ export namespace AILooperWorkbench {
     readonly current_task_run?: AiLooper.TaskRun
   }
 
+  export type ExecutionAttemptSummary = {
+    readonly execution_attempt_id: AiLooper.ID
+    readonly task_run_id: AiLooper.ID
+    readonly attempt_type: "analysis" | "planning" | "implementation" | "validation" | "reporting" | "recovery"
+    readonly outcome: "succeeded" | "failed" | "blocked" | "cancelled"
+    readonly started_at: string
+    readonly ended_at?: string
+    readonly progress_summary?: string
+  }
+
+  export type TaskRunDetail = {
+    readonly task_run: AiLooper.TaskRun
+    readonly artifacts: AiLooper.Artifact[]
+    readonly evidence: AiLooper.Evidence[]
+    readonly attempts: ExecutionAttemptSummary[]
+    readonly audit_records: AiLooper.AuditRecord[]
+  }
+
   export class UnavailableError extends Schema.TaggedErrorClass<UnavailableError>()("AILooperWorkbench.UnavailableError", {
     message: Schema.String,
   }) {}
@@ -31,6 +49,11 @@ export namespace AILooperWorkbench {
       readonly workspaceRef: string
       readonly idempotencyKey?: string
     }) => Effect.Effect<AiLooper.TaskRun, UnavailableError>
+    readonly getRunDetail: (taskRunID: AiLooper.ID) => Effect.Effect<TaskRunDetail | undefined, UnavailableError>
+    readonly cancelTaskRun: (input: {
+      readonly taskRunID: AiLooper.ID
+      readonly reason: string
+    }) => Effect.Effect<AiLooper.TaskRun | undefined, UnavailableError>
     readonly decidePlan: (input: {
       readonly taskRunID: AiLooper.ID
       readonly planID: AiLooper.ID
@@ -60,6 +83,12 @@ export namespace AILooperWorkbench {
       }),
       createTaskRun: Effect.fn("AILooperWorkbench.createTaskRun")(function* () {
         return yield* new UnavailableError({ message: "AI Looper TaskRun creation is not implemented yet" })
+      }),
+      getRunDetail: Effect.fn("AILooperWorkbench.getRunDetail")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper TaskRun detail is not implemented yet" })
+      }),
+      cancelTaskRun: Effect.fn("AILooperWorkbench.cancelTaskRun")(function* () {
+        return yield* new UnavailableError({ message: "AI Looper TaskRun cancellation is not implemented yet" })
       }),
       decidePlan: Effect.fn("AILooperWorkbench.decidePlan")(function* () {
         return yield* new UnavailableError({ message: "AI Looper plan decision is not implemented yet" })

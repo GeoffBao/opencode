@@ -701,15 +701,30 @@ const Endpoint18_2 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_2
     payload: { workspace_ref: input["workspace_ref"], idempotency_key: input["idempotency_key"] },
   }).pipe(Effect.mapError(mapClientError))
 
-type Endpoint18_3Request = Parameters<RawClient["server.aiLooper"]["aiLooper.plan.decide"]>[0]
-type Endpoint18_3Input = {
-  readonly taskRunID: Endpoint18_3Request["params"]["taskRunID"]
-  readonly plan_id: Endpoint18_3Request["payload"]["plan_id"]
-  readonly plan_version: Endpoint18_3Request["payload"]["plan_version"]
-  readonly decision: Endpoint18_3Request["payload"]["decision"]
-  readonly comments?: Endpoint18_3Request["payload"]["comments"]
-}
+type Endpoint18_3Request = Parameters<RawClient["server.aiLooper"]["aiLooper.run.detail"]>[0]
+type Endpoint18_3Input = { readonly taskRunID: Endpoint18_3Request["params"]["taskRunID"] }
 const Endpoint18_3 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_3Input) =>
+  raw["aiLooper.run.detail"]({ params: { taskRunID: input["taskRunID"] } }).pipe(Effect.mapError(mapClientError))
+
+type Endpoint18_4Request = Parameters<RawClient["server.aiLooper"]["aiLooper.run.cancel"]>[0]
+type Endpoint18_4Input = {
+  readonly taskRunID: Endpoint18_4Request["params"]["taskRunID"]
+  readonly reason: Endpoint18_4Request["payload"]["reason"]
+}
+const Endpoint18_4 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_4Input) =>
+  raw["aiLooper.run.cancel"]({ params: { taskRunID: input["taskRunID"] }, payload: { reason: input["reason"] } }).pipe(
+    Effect.mapError(mapClientError),
+  )
+
+type Endpoint18_5Request = Parameters<RawClient["server.aiLooper"]["aiLooper.plan.decide"]>[0]
+type Endpoint18_5Input = {
+  readonly taskRunID: Endpoint18_5Request["params"]["taskRunID"]
+  readonly plan_id: Endpoint18_5Request["payload"]["plan_id"]
+  readonly plan_version: Endpoint18_5Request["payload"]["plan_version"]
+  readonly decision: Endpoint18_5Request["payload"]["decision"]
+  readonly comments?: Endpoint18_5Request["payload"]["comments"]
+}
+const Endpoint18_5 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_5Input) =>
   raw["aiLooper.plan.decide"]({
     params: { taskRunID: input["taskRunID"] },
     payload: {
@@ -720,15 +735,15 @@ const Endpoint18_3 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_3
     },
   }).pipe(Effect.mapError(mapClientError))
 
-type Endpoint18_4Request = Parameters<RawClient["server.aiLooper"]["aiLooper.event.ingest"]>[0]
-type Endpoint18_4Input = {
-  readonly source_system: Endpoint18_4Request["payload"]["source_system"]
-  readonly source_event_id?: Endpoint18_4Request["payload"]["source_event_id"]
-  readonly event_type: Endpoint18_4Request["payload"]["event_type"]
-  readonly idempotency_key?: Endpoint18_4Request["payload"]["idempotency_key"]
-  readonly payload: Endpoint18_4Request["payload"]["payload"]
+type Endpoint18_6Request = Parameters<RawClient["server.aiLooper"]["aiLooper.event.ingest"]>[0]
+type Endpoint18_6Input = {
+  readonly source_system: Endpoint18_6Request["payload"]["source_system"]
+  readonly source_event_id?: Endpoint18_6Request["payload"]["source_event_id"]
+  readonly event_type: Endpoint18_6Request["payload"]["event_type"]
+  readonly idempotency_key?: Endpoint18_6Request["payload"]["idempotency_key"]
+  readonly payload: Endpoint18_6Request["payload"]["payload"]
 }
-const Endpoint18_4 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_4Input) =>
+const Endpoint18_6 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_6Input) =>
   raw["aiLooper.event.ingest"]({
     payload: {
       source_system: input["source_system"],
@@ -743,8 +758,10 @@ const adaptGroup18 = (raw: RawClient["server.aiLooper"]) => ({
   list: Endpoint18_0(raw),
   get: Endpoint18_1(raw),
   create: Endpoint18_2(raw),
-  decide: Endpoint18_3(raw),
-  ingest: Endpoint18_4(raw),
+  detail: Endpoint18_3(raw),
+  cancel: Endpoint18_4(raw),
+  decide: Endpoint18_5(raw),
+  ingest: Endpoint18_6(raw),
 })
 
 const adaptClient = (raw: RawClient) => ({

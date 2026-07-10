@@ -1,6 +1,12 @@
 import { HttpApiEndpoint, HttpApiGroup, OpenApi } from "effect/unstable/httpapi"
 import { AiLooperProtocol } from "../ai-looper"
-import { AiLooperTaskNotFoundError, ConflictError, ForbiddenError, ServiceUnavailableError } from "../errors"
+import {
+  AiLooperTaskNotFoundError,
+  AiLooperTaskRunNotFoundError,
+  ConflictError,
+  ForbiddenError,
+  ServiceUnavailableError,
+} from "../errors"
 
 export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
   .add(
@@ -38,6 +44,33 @@ export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
         identifier: "v2.aiLooper.taskRun.create",
         summary: "Create or reuse AI Looper TaskRun",
         description: "Start or reuse an active durable TaskRun for a task capsule and workspace.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.get("aiLooper.run.detail", "/api/ai-looper/runs/:taskRunID", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      success: AiLooperProtocol.TaskRunDetailResponse,
+      error: [AiLooperTaskRunNotFoundError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.run.get",
+        summary: "Get AI Looper TaskRun detail",
+        description: "Read durable TaskRun state with attempts, artifacts, evidence, and audit records.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.post("aiLooper.run.cancel", "/api/ai-looper/runs/:taskRunID/cancel", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      payload: AiLooperProtocol.CancelTaskRunRequest,
+      success: AiLooperProtocol.TaskRunResponse,
+      error: [AiLooperTaskRunNotFoundError, ForbiddenError, ConflictError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.run.cancel",
+        summary: "Cancel AI Looper TaskRun",
+        description: "Request human-authorized cancellation for a durable TaskRun and preserve auditability.",
       }),
     ),
   )

@@ -117,6 +117,10 @@ import type {
   ServerAiLooperGetOutput,
   ServerAiLooperCreateInput,
   ServerAiLooperCreateOutput,
+  ServerAiLooperDetailInput,
+  ServerAiLooperDetailOutput,
+  ServerAiLooperCancelInput,
+  ServerAiLooperCancelOutput,
   ServerAiLooperDecideInput,
   ServerAiLooperDecideOutput,
   ServerAiLooperIngestInput,
@@ -1027,6 +1031,29 @@ export function make(options: ClientOptions) {
             body: { workspace_ref: input["workspace_ref"], idempotency_key: input["idempotency_key"] },
             successStatus: 200,
             declaredStatuses: [404, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      detail: (input: ServerAiLooperDetailInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperDetailOutput>(
+          {
+            method: "GET",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}`,
+            successStatus: 200,
+            declaredStatuses: [404, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      cancel: (input: ServerAiLooperCancelInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperCancelOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}/cancel`,
+            body: { reason: input["reason"] },
+            successStatus: 200,
+            declaredStatuses: [404, 403, 409, 503, 401, 400],
             empty: false,
           },
           requestOptions,

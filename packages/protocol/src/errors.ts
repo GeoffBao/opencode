@@ -118,3 +118,12 @@ export class AiLooperTaskNotFoundError extends Schema.TaggedErrorClass<AiLooperT
   },
   { httpApiStatus: 404 },
 ) {}
+
+export class AiLooperTaskRunNotFoundError extends Schema.TaggedErrorClass<AiLooperTaskRunNotFoundError>()(
+  "AiLooperTaskRunNotFoundError",
+  {
+    taskRunID: Schema.String,
+    message: Schema.String,
+  },
+  { httpApiStatus: 404 },
+) {}
