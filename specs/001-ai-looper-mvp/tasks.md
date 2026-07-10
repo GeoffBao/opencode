@@ -62,7 +62,7 @@
 - [X] T027 [P] [US1] Add contract test for `GET /ai-looper/tasks` in `packages/server/test/contract/ai-looper-tasks.test.ts`
 - [X] T028 [P] [US1] Add contract test for `GET /ai-looper/tasks/{taskCapsuleId}` in `packages/server/test/contract/ai-looper-task-detail.test.ts`
 - [X] T029 [P] [US1] Add integration test for authorized personal Teambition task list import in `packages/core/test/ai-looper/teambition-import.test.ts`
-- [ ] T030 [P] [US1] Add integration test for source content vs AI interpretation separation in `packages/enterprise/test/ai-looper-task-view.test.tsx`
+- [X] T030 [P] [US1] Add integration test for source content vs AI interpretation separation in `packages/enterprise/test/ai-looper-task-view.test.tsx`
 - [X] T031 [P] [US1] Add routing integration test for feature/task/bug to execution tracks in `packages/core/test/ai-looper/routing-integration.test.ts`
 
 ### Implementation for User Story 1
@@ -74,8 +74,8 @@
 - [X] T036 [US1] Implement missing, inaccessible, deleted, archived, and reassigned source handling in `packages/core/src/ai-looper/teambition.ts`
 - [ ] T037 [US1] Implement `GET /ai-looper/tasks` handler in `packages/server/src/handlers/ai-looper.ts`
 - [ ] T038 [US1] Implement `GET /ai-looper/tasks/{taskCapsuleId}` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T039 [US1] Render assigned task list with source type and execution track in `packages/enterprise/src/routes/ai-looper.tsx`
-- [ ] T040 [US1] Render task detail with original source, attachments, acceptance criteria, and AI interpretation sections in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
+- [X] T039 [US1] Render assigned task list with source type and execution track in `packages/enterprise/src/routes/ai-looper.tsx`
+- [X] T040 [US1] Render task detail with original source, attachments, acceptance criteria, and AI interpretation sections in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
 - [ ] T041 [US1] Record audit entries for source retrieval and routing decisions in `packages/core/src/ai-looper/audit.ts`
 
 **Checkpoint**: US1 independently demoable.
