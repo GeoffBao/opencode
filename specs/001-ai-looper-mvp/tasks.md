@@ -90,8 +90,8 @@
 
 ### Tests for User Story 2
 
-- [ ] T042 [P] [US2] Add contract test for `POST /ai-looper/tasks/{taskCapsuleId}/runs` in `packages/server/test/contract/ai-looper-create-run.test.ts`
-- [ ] T043 [P] [US2] Add contract test for `POST /ai-looper/runs/{taskRunId}/plan/decision` in `packages/server/test/contract/ai-looper-plan-decision.test.ts`
+- [X] T042 [P] [US2] Add contract test for `POST /ai-looper/tasks/{taskCapsuleId}/runs` in `packages/server/test/contract/ai-looper-create-run.test.ts`
+- [X] T043 [P] [US2] Add contract test for `POST /ai-looper/runs/{taskRunId}/plan/decision` in `packages/server/test/contract/ai-looper-plan-decision.test.ts`
 - [ ] T044 [P] [US2] Add authorization test for reviewer resolution from Teambition task/project config in `packages/core/test/ai-looper/approval-authority.test.ts`
 - [ ] T045 [P] [US2] Add stale plan approval rejection test in `packages/core/test/ai-looper/plan-version.test.ts`
 - [ ] T046 [P] [US2] Add standard-task lightweight brief confirmation test in `packages/core/test/ai-looper/lightweight-brief.test.ts`

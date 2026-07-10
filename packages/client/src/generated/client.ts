@@ -115,6 +115,10 @@ import type {
   ServerAiLooperListOutput,
   ServerAiLooperGetInput,
   ServerAiLooperGetOutput,
+  ServerAiLooperCreateInput,
+  ServerAiLooperCreateOutput,
+  ServerAiLooperDecideInput,
+  ServerAiLooperDecideOutput,
 } from "./types"
 import { ClientError } from "./client-error"
 
@@ -1009,6 +1013,35 @@ export function make(options: ClientOptions) {
             path: `/api/ai-looper/tasks/${encodeURIComponent(input.taskCapsuleID)}`,
             successStatus: 200,
             declaredStatuses: [404, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      create: (input: ServerAiLooperCreateInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperCreateOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/tasks/${encodeURIComponent(input.taskCapsuleID)}/runs`,
+            body: { workspace_ref: input["workspace_ref"], idempotency_key: input["idempotency_key"] },
+            successStatus: 200,
+            declaredStatuses: [404, 503, 401, 400],
+            empty: false,
+          },
+          requestOptions,
+        ),
+      decide: (input: ServerAiLooperDecideInput, requestOptions?: RequestOptions) =>
+        request<ServerAiLooperDecideOutput>(
+          {
+            method: "POST",
+            path: `/api/ai-looper/runs/${encodeURIComponent(input.taskRunID)}/plan/decision`,
+            body: {
+              plan_id: input["plan_id"],
+              plan_version: input["plan_version"],
+              decision: input["decision"],
+              comments: input["comments"],
+            },
+            successStatus: 200,
+            declaredStatuses: [403, 409, 503, 401, 400],
             empty: false,
           },
           requestOptions,

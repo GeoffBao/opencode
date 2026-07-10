@@ -689,7 +689,43 @@ type Endpoint18_1Input = { readonly taskCapsuleID: Endpoint18_1Request["params"]
 const Endpoint18_1 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_1Input) =>
   raw["aiLooper.task.get"]({ params: { taskCapsuleID: input["taskCapsuleID"] } }).pipe(Effect.mapError(mapClientError))
 
-const adaptGroup18 = (raw: RawClient["server.aiLooper"]) => ({ list: Endpoint18_0(raw), get: Endpoint18_1(raw) })
+type Endpoint18_2Request = Parameters<RawClient["server.aiLooper"]["aiLooper.taskRun.create"]>[0]
+type Endpoint18_2Input = {
+  readonly taskCapsuleID: Endpoint18_2Request["params"]["taskCapsuleID"]
+  readonly workspace_ref: Endpoint18_2Request["payload"]["workspace_ref"]
+  readonly idempotency_key?: Endpoint18_2Request["payload"]["idempotency_key"]
+}
+const Endpoint18_2 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_2Input) =>
+  raw["aiLooper.taskRun.create"]({
+    params: { taskCapsuleID: input["taskCapsuleID"] },
+    payload: { workspace_ref: input["workspace_ref"], idempotency_key: input["idempotency_key"] },
+  }).pipe(Effect.mapError(mapClientError))
+
+type Endpoint18_3Request = Parameters<RawClient["server.aiLooper"]["aiLooper.plan.decide"]>[0]
+type Endpoint18_3Input = {
+  readonly taskRunID: Endpoint18_3Request["params"]["taskRunID"]
+  readonly plan_id: Endpoint18_3Request["payload"]["plan_id"]
+  readonly plan_version: Endpoint18_3Request["payload"]["plan_version"]
+  readonly decision: Endpoint18_3Request["payload"]["decision"]
+  readonly comments?: Endpoint18_3Request["payload"]["comments"]
+}
+const Endpoint18_3 = (raw: RawClient["server.aiLooper"]) => (input: Endpoint18_3Input) =>
+  raw["aiLooper.plan.decide"]({
+    params: { taskRunID: input["taskRunID"] },
+    payload: {
+      plan_id: input["plan_id"],
+      plan_version: input["plan_version"],
+      decision: input["decision"],
+      comments: input["comments"],
+    },
+  }).pipe(Effect.mapError(mapClientError))
+
+const adaptGroup18 = (raw: RawClient["server.aiLooper"]) => ({
+  list: Endpoint18_0(raw),
+  get: Endpoint18_1(raw),
+  create: Endpoint18_2(raw),
+  decide: Endpoint18_3(raw),
+})
 
 const adaptClient = (raw: RawClient) => ({
   health: adaptGroup0(raw["server.health"]),

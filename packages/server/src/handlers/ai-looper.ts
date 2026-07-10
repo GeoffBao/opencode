@@ -1,5 +1,5 @@
 import { AILooperWorkbench } from "@opencode-ai/core/ai-looper/workbench"
-import { AiLooperTaskNotFoundError } from "@opencode-ai/protocol/errors"
+import { AiLooperTaskNotFoundError, ServiceUnavailableError } from "@opencode-ai/protocol/errors"
 import { Effect } from "effect"
 import { HttpApiBuilder } from "effect/unstable/httpapi"
 import { Api } from "../api"
@@ -24,5 +24,11 @@ export const AILooperHandler = HttpApiBuilder.group(Api, "server.aiLooper", (han
           message: `AI Looper task capsule not found: ${ctx.params.taskCapsuleID}`,
         })
       }),
+    )
+    .handle("aiLooper.taskRun.create", () =>
+      Effect.fail(new ServiceUnavailableError({ message: "AI Looper TaskRun creation is not implemented yet" })),
+    )
+    .handle("aiLooper.plan.decide", () =>
+      Effect.fail(new ServiceUnavailableError({ message: "AI Looper plan decision is not implemented yet" })),
     ),
 )

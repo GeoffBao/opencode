@@ -1,6 +1,6 @@
 import { HttpApiEndpoint, HttpApiGroup, OpenApi } from "effect/unstable/httpapi"
 import { AiLooperProtocol } from "../ai-looper"
-import { AiLooperTaskNotFoundError } from "../errors"
+import { AiLooperTaskNotFoundError, ConflictError, ForbiddenError, ServiceUnavailableError } from "../errors"
 
 export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
   .add(
@@ -24,6 +24,34 @@ export const AILooperGroup = HttpApiGroup.make("server.aiLooper")
         identifier: "v2.aiLooper.task.get",
         summary: "Get AI Looper task context",
         description: "Read source task context, acceptance criteria, and the current TaskRun when one exists.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.post("aiLooper.taskRun.create", "/api/ai-looper/tasks/:taskCapsuleID/runs", {
+      params: { taskCapsuleID: AiLooperProtocol.TaskCapsuleSummary.fields.task_capsule_id },
+      payload: AiLooperProtocol.CreateTaskRunRequest,
+      success: AiLooperProtocol.TaskRunResponse,
+      error: [AiLooperTaskNotFoundError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.taskRun.create",
+        summary: "Create or reuse AI Looper TaskRun",
+        description: "Start or reuse an active durable TaskRun for a task capsule and workspace.",
+      }),
+    ),
+  )
+  .add(
+    HttpApiEndpoint.post("aiLooper.plan.decide", "/api/ai-looper/runs/:taskRunID/plan/decision", {
+      params: { taskRunID: AiLooperProtocol.TaskRunResponse.fields.task_run_id },
+      payload: AiLooperProtocol.PlanDecisionRequest,
+      success: AiLooperProtocol.PlanDecisionResponse,
+      error: [ForbiddenError, ConflictError, ServiceUnavailableError],
+    }).annotateMerge(
+      OpenApi.annotations({
+        identifier: "v2.aiLooper.plan.decide",
+        summary: "Approve or reject AI Looper execution plan",
+        description: "Record an authorized decision for the exact current execution plan version.",
       }),
     ),
   )

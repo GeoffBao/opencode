@@ -109,6 +109,10 @@ export type AiLooperTaskNotFoundError = {
 export const isAiLooperTaskNotFoundError = (value: unknown): value is AiLooperTaskNotFoundError =>
   typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "AiLooperTaskNotFoundError"
 
+export type ForbiddenError = { readonly _tag: "ForbiddenError"; readonly message: string }
+export const isForbiddenError = (value: unknown): value is ForbiddenError =>
+  typeof value === "object" && value !== null && "_tag" in value && value["_tag"] === "ForbiddenError"
+
 export type HealthGetOutput = { readonly healthy: true }
 
 export type LocationGetInput = {
@@ -2904,4 +2908,100 @@ export type ServerAiLooperGetOutput = {
         readonly cancelled_at?: string | undefined
       }
     | undefined
+}
+
+export type ServerAiLooperCreateInput = {
+  readonly taskCapsuleID: { readonly taskCapsuleID: string }["taskCapsuleID"]
+  readonly workspace_ref: {
+    readonly workspace_ref: string
+    readonly idempotency_key?: string | undefined
+  }["workspace_ref"]
+  readonly idempotency_key?: {
+    readonly workspace_ref: string
+    readonly idempotency_key?: string | undefined
+  }["idempotency_key"]
+}
+
+export type ServerAiLooperCreateOutput = {
+  readonly task_run_id: string
+  readonly task_capsule_id: string
+  readonly execution_track: "spec_driven" | "standard_task" | "bugfix"
+  readonly gate_state:
+    | "not_required"
+    | "awaiting_confirmation"
+    | "confirmed"
+    | "awaiting_formal_approval"
+    | "formally_approved"
+    | "rejected"
+    | "escalated"
+  readonly phase:
+    | "received"
+    | "analyzing"
+    | "planning"
+    | "plan_review"
+    | "implementing"
+    | "verifying"
+    | "reporting"
+    | "time_confirmation"
+    | "completed"
+    | "cancelled"
+  readonly disposition: "running" | "waiting" | "blocked" | "escalated"
+  readonly lifecycle: "active" | "completed" | "cancelled" | "archived"
+  readonly latest_committed_step: string
+  readonly next_expected_action?: string | undefined
+  readonly responsible_role?: string | undefined
+  readonly retry_count: number
+  readonly retry_budget: number
+  readonly last_attempt_at?: string | undefined
+  readonly next_wake_at?: string | undefined
+  readonly blocked_reason?: string | undefined
+  readonly blocked_owner?: string | undefined
+  readonly blocked_since?: string | undefined
+  readonly escalation_reason?: string | undefined
+  readonly escalated_at?: string | undefined
+  readonly created_at: string
+  readonly updated_at: string
+  readonly completed_at?: string | undefined
+  readonly cancelled_at?: string | undefined
+}
+
+export type ServerAiLooperDecideInput = {
+  readonly taskRunID: { readonly taskRunID: string }["taskRunID"]
+  readonly plan_id: {
+    readonly plan_id: string
+    readonly plan_version: number
+    readonly decision: "approved" | "rejected"
+    readonly comments?: string | undefined
+  }["plan_id"]
+  readonly plan_version: {
+    readonly plan_id: string
+    readonly plan_version: number
+    readonly decision: "approved" | "rejected"
+    readonly comments?: string | undefined
+  }["plan_version"]
+  readonly decision: {
+    readonly plan_id: string
+    readonly plan_version: number
+    readonly decision: "approved" | "rejected"
+    readonly comments?: string | undefined
+  }["decision"]
+  readonly comments?: {
+    readonly plan_id: string
+    readonly plan_version: number
+    readonly decision: "approved" | "rejected"
+    readonly comments?: string | undefined
+  }["comments"]
+}
+
+export type ServerAiLooperDecideOutput = {
+  readonly approval_decision_id: string
+  readonly task_run_id: string
+  readonly artifact_type: string
+  readonly artifact_id: string
+  readonly artifact_version: number
+  readonly decision: "approved" | "rejected"
+  readonly actor_id: string
+  readonly authority_source: string
+  readonly comments?: string | undefined
+  readonly decided_at: string
 }

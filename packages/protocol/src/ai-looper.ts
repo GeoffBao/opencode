@@ -27,6 +27,23 @@ export namespace AiLooperProtocol {
   })
   export type TaskDetailResponse = typeof TaskDetailResponse.Type
 
+  export const CreateTaskRunRequest = Schema.Struct({
+    workspace_ref: Schema.String,
+    idempotency_key: Schema.String.pipe(Schema.optional),
+  })
+  export type CreateTaskRunRequest = typeof CreateTaskRunRequest.Type
+
+  export const PlanDecisionRequest = Schema.Struct({
+    plan_id: AiLooper.ID,
+    plan_version: Schema.Number,
+    decision: Schema.Literals(["approved", "rejected"]),
+    comments: Schema.String.pipe(Schema.optional),
+  })
+  export type PlanDecisionRequest = typeof PlanDecisionRequest.Type
+
   export const TaskRunResponse = AiLooper.TaskRun
   export type TaskRunResponse = typeof TaskRunResponse.Type
+
+  export const PlanDecisionResponse = AiLooper.ApprovalDecision
+  export type PlanDecisionResponse = typeof PlanDecisionResponse.Type
 }
