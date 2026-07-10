@@ -72,11 +72,11 @@
 - [X] T034 [US1] Implement TaskCapsule creation and active TaskRun lookup in `packages/core/src/ai-looper/taskrun.ts`
 - [X] T035 [US1] Implement routing decision creation for feature/task/bug and size/risk in `packages/core/src/ai-looper/routing.ts`
 - [X] T036 [US1] Implement missing, inaccessible, deleted, archived, and reassigned source handling in `packages/core/src/ai-looper/teambition.ts`
-- [ ] T037 [US1] Implement `GET /ai-looper/tasks` handler in `packages/server/src/handlers/ai-looper.ts`
-- [ ] T038 [US1] Implement `GET /ai-looper/tasks/{taskCapsuleId}` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T037 [US1] Implement `GET /ai-looper/tasks` handler in `packages/server/src/handlers/ai-looper.ts`
+- [X] T038 [US1] Implement `GET /ai-looper/tasks/{taskCapsuleId}` handler in `packages/server/src/handlers/ai-looper.ts`
 - [X] T039 [US1] Render assigned task list with source type and execution track in `packages/enterprise/src/routes/ai-looper.tsx`
 - [X] T040 [US1] Render task detail with original source, attachments, acceptance criteria, and AI interpretation sections in `packages/enterprise/src/routes/ai-looper/[taskRunID].tsx`
-- [ ] T041 [US1] Record audit entries for source retrieval and routing decisions in `packages/core/src/ai-looper/audit.ts`
+- [X] T041 [US1] Record audit entries for source retrieval and routing decisions in `packages/core/src/ai-looper/audit.ts`
 
 **Checkpoint**: US1 independently demoable.
 
