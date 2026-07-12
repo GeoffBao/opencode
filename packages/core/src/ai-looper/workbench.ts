@@ -5,6 +5,8 @@ import { Database } from "../database/database"
 import { makeGlobalNode } from "../effect/app-node"
 import { AILooperExternalEventTable, AILooperTaskCapsuleTable, AILooperTaskRunTable } from "./sql"
 import { selectExecutionTrack } from "./routing"
+import { selectGatePolicy } from "./routing"
+import { createOrReuseTaskRun, createTaskCapsule, createTaskRunDetail } from "./taskrun"
 import type { TaskRunDetail } from "./taskrun"
 
 export namespace AILooperWorkbench {
@@ -130,11 +132,83 @@ export namespace AILooperWorkbench {
             current_task_run: activeTaskRun ? toTaskRun(activeTaskRun) : undefined,
           }
         }),
-        createTaskRun: Effect.fn("AILooperWorkbench.createTaskRun")(function* () {
-          return yield* new UnavailableError({ message: "AI Looper TaskRun creation is not implemented yet" })
+        createTaskRun: Effect.fn("AILooperWorkbench.createTaskRun")(function* (input) {
+          const capsule = yield* db
+            .select()
+            .from(AILooperTaskCapsuleTable)
+            .where(eq(AILooperTaskCapsuleTable.id, input.taskCapsuleID))
+            .get()
+            .pipe(Effect.orDie)
+          if (!capsule) return yield* new UnavailableError({ message: `Task capsule not found: ${input.taskCapsuleID}` })
+
+          if (capsule.active_task_run_id) {
+            const active = yield* db
+              .select()
+              .from(AILooperTaskRunTable)
+              .where(eq(AILooperTaskRunTable.id, capsule.active_task_run_id))
+              .get()
+              .pipe(Effect.orDie)
+            if (active?.lifecycle === "active") return toTaskRun(active)
+          }
+
+          const now = new Date().toISOString()
+          const taskRun = createOrReuseTaskRun({
+            taskRunID: crypto.randomUUID(),
+            taskCapsuleID: capsule.id,
+            executionTrack: capsule.execution_track ?? selectExecutionTrack({ workItemType: capsule.work_item_type }),
+            createdAt: now,
+          }).taskRun
+          const taskCapsule = createTaskCapsule({
+            taskCapsuleID: capsule.id,
+            sourceTask: capsule.source_task,
+            responsibleEngineerID: capsule.owner_user_id,
+            workspaceRef: input.workspaceRef,
+            activeTaskRunID: taskRun.task_run_id,
+            createdAt: now,
+          })
+
+          yield* db
+            .insert(AILooperTaskRunTable)
+            .values({
+              id: taskRun.task_run_id,
+              source_system: "teambition",
+              source_task_id: capsule.source_task_id,
+              work_item_type: capsule.work_item_type,
+              title: capsule.title,
+              source_task: capsule.source_task,
+              task_capsule: taskCapsule,
+              execution_track: taskRun.execution_track,
+              gate_policy: selectGatePolicy({ workItemType: taskRun.execution_track === "bugfix" ? "bug" : capsule.work_item_type }),
+              phase: taskRun.phase,
+              lifecycle: taskRun.lifecycle,
+              gate_state: taskRun.gate_state,
+              current_disposition: taskRun.disposition,
+              owner_user_id: capsule.owner_user_id,
+              workspace_ref: input.workspaceRef,
+              attempt_count: 0,
+              high_risk: false,
+              time_created: Date.now(),
+              time_updated: Date.now(),
+            })
+            .run()
+            .pipe(Effect.orDie)
+          yield* db
+            .update(AILooperTaskCapsuleTable)
+            .set({ active_task_run_id: taskRun.task_run_id, workspace_ref: input.workspaceRef, time_updated: Date.now() })
+            .where(eq(AILooperTaskCapsuleTable.id, capsule.id))
+            .run()
+            .pipe(Effect.orDie)
+          return taskRun
         }),
-        getRunDetail: Effect.fn("AILooperWorkbench.getRunDetail")(function* () {
-          return yield* new UnavailableError({ message: "AI Looper TaskRun detail is not implemented yet" })
+        getRunDetail: Effect.fn("AILooperWorkbench.getRunDetail")(function* (taskRunID) {
+          const row = yield* db
+            .select()
+            .from(AILooperTaskRunTable)
+            .where(eq(AILooperTaskRunTable.id, taskRunID))
+            .get()
+            .pipe(Effect.orDie)
+          if (!row) return undefined
+          return createTaskRunDetail({ taskRun: toTaskRun(row) })
         }),
         cancelTaskRun: Effect.fn("AILooperWorkbench.cancelTaskRun")(function* () {
           return yield* new UnavailableError({ message: "AI Looper TaskRun cancellation is not implemented yet" })
